@@ -11,14 +11,18 @@ export type useLocationsReturn = {
   isLoading: boolean;
   isError: boolean;
   errorMessage: string;
-  getRecommendationId: (requestBody: RecommendationRequestBody) => Promise<string>;
+  getRecommendationId: (
+    requestBody: RecommendationRequestBody,
+  ) => Promise<string>;
   getRecommendationResult: (id: string) => Promise<Location>;
-  getRecommendation: (requestBody: RecommendationRequestBody) => Promise<{ id: string; data: Location }>;
+  getRecommendation: (
+    requestBody: RecommendationRequestBody,
+  ) => Promise<{ id: string; data: Location }>;
 };
 
 const initialData: Location = {
   startingPlaces: [],
-  recommendedLocations: []
+  recommendedLocations: [],
 };
 
 const useLocations = (): useLocationsReturn => {
@@ -34,16 +38,18 @@ const useLocations = (): useLocationsReturn => {
       setIsError(false);
       setErrorMessage('');
 
-    try {
-      return await fetchRecommendationId(requestBody);
-    } catch (error) {
-      setIsError(true);
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        return await fetchRecommendationId(requestBody);
+      } catch (error) {
+        setIsError(true);
+        setErrorMessage(error instanceof Error ? error.message : String(error));
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   const getRecommendationResult = useCallback(async (id: string) => {
     setIsLoading(true);
@@ -63,24 +69,27 @@ const useLocations = (): useLocationsReturn => {
     }
   }, []);
 
-  const getRecommendation = useCallback(async (requestBody: RecommendationRequestBody) => {
-    setIsProgressLoading(true);
-    setData(initialData);
-    try {
-      const newId = await getRecommendationId(requestBody);
-      const newData = await getRecommendationResult(newId);
+  const getRecommendation = useCallback(
+    async (requestBody: RecommendationRequestBody) => {
+      setIsProgressLoading(true);
+      setData(initialData);
+      try {
+        const newId = await getRecommendationId(requestBody);
+        const newData = await getRecommendationResult(newId);
 
-      await new Promise((resolve) => setTimeout(resolve, 600));
+        await new Promise((resolve) => setTimeout(resolve, 600));
 
-      return { id: newId, data: newData };
-    } catch (error) {
-      setIsError(true);
-      setErrorMessage(error instanceof Error ? error.message : String(error));
-      throw error;
-    } finally {
-      setIsProgressLoading(false);
-    }
-  }, []);
+        return { id: newId, data: newData };
+      } catch (error) {
+        setIsError(true);
+        setErrorMessage(error instanceof Error ? error.message : String(error));
+        throw error;
+      } finally {
+        setIsProgressLoading(false);
+      }
+    },
+    [],
+  );
 
   return {
     data,
@@ -90,7 +99,7 @@ const useLocations = (): useLocationsReturn => {
     errorMessage,
     getRecommendationId,
     getRecommendationResult,
-    getRecommendation
+    getRecommendation,
   };
 };
 
