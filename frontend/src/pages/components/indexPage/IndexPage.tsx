@@ -11,7 +11,8 @@ import { flex, grid_padding, scroll } from '@shared/styles/default.styled';
 import * as indexPage from './indexPage.styled';
 
 function IndexPage() {
-  const { data, isProgressLoading, isError, errorMessage } = useLocationsContext();
+  const { data, isProgressLoading, isError, errorMessage } =
+    useLocationsContext();
 
   if (isError)
     return (
@@ -24,7 +25,11 @@ function IndexPage() {
     );
 
   if (isProgressLoading) {
-    return <ProgressLoading isComplete={isProgressLoading && data.recommendedLocations.length > 0} />;
+    return (
+      <ProgressLoading
+        isComplete={isProgressLoading && data?.recommendedLocations?.length > 0}
+      />
+    );
   }
   return (
     <div
