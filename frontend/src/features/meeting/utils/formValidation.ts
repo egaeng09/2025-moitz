@@ -51,6 +51,7 @@ export const validateStationName = (name: string): ValidationError => {
     return {
       isValid: true,
       message: '',
+      matchedStation: matched[0],
     };
   }
 
