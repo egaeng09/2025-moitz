@@ -1,3 +1,4 @@
+import { getMeetingStorage } from '@entities/location/model/meetingStorage';
 import {
   RecommendedLocation,
   StartingPlace,
@@ -18,9 +19,14 @@ function BottomSheetList({
   recommendedLocations,
   onSpotClick,
 }: BottomSheetListProps) {
+  const { conditionID } = getMeetingStorage();
+
   return (
     <>
-      <StartingSpotWrapper startingPlaces={startingPlaces} />
+      <StartingSpotWrapper
+        startingPlaces={startingPlaces}
+        conditionID={conditionID}
+      />
       <SpotItemList
         recommendedLocations={recommendedLocations}
         onSpotClick={onSpotClick}

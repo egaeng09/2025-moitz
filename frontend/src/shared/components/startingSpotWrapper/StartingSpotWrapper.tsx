@@ -1,7 +1,7 @@
-import { s } from 'msw/lib/core/HttpResponse-DWu36LsY';
+import { CONDITION_CARD_TEXT } from '@features/meeting/constant/conditionCard';
 
-import { useLocationsContext } from '@entities/location/contexts/useLocationsContext';
 import { StartingPlace } from '@entities/location/types/Location';
+import { LocationRequirement } from '@entities/location/types/LocationRequirement';
 
 import StartingSpotName from '@shared/components/startingSpotName/StartingSpotName';
 import { flex, typography } from '@shared/styles/default.styled';
@@ -10,9 +10,18 @@ import * as startSpotWrapper from './startingSpotWrapper.styled';
 
 interface StaringSpotWrapperProps {
   startingPlaces: StartingPlace[];
+  conditionID: LocationRequirement;
 }
 
-function StartingSpotWrapper({ startingPlaces }: StaringSpotWrapperProps) {
+function StartingSpotWrapper({
+  startingPlaces,
+  conditionID,
+}: StaringSpotWrapperProps) {
+  const conditionIdText =
+    CONDITION_CARD_TEXT[conditionID].TEXT === '선택하지 않음'
+      ? CONDITION_CARD_TEXT[conditionID].TEXT
+      : `${CONDITION_CARD_TEXT[conditionID].TEXT} 장소`;
+
   return (
     <div
       css={[startSpotWrapper.base(), flex({ direction: 'column', gap: 10 })]}
@@ -32,9 +41,11 @@ function StartingSpotWrapper({ startingPlaces }: StaringSpotWrapperProps) {
           })}
         </div>
       </div>
-      <div css={[flex({ align: 'center', gap: 20 })]}>
+      <div css={[flex({ align: 'center', gap: 10 })]}>
         <span css={[typography.sh1, startSpotWrapper.title()]}>조건</span>
-        <span css={[typography.b2, startSpotWrapper.content()]}>{}장소</span>
+        <span css={[typography.b2, startSpotWrapper.content()]}>
+          {conditionIdText}
+        </span>
       </div>
     </div>
   );
