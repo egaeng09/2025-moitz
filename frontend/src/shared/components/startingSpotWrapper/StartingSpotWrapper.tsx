@@ -17,10 +17,10 @@ function StartingSpotWrapper({
   startingPlaces,
   conditionID,
 }: StaringSpotWrapperProps) {
+  const entry = CONDITION_CARD_TEXT[conditionID];
   const conditionIdText =
-    CONDITION_CARD_TEXT[conditionID].TEXT === '선택하지 않음'
-      ? CONDITION_CARD_TEXT[conditionID].TEXT
-      : `${CONDITION_CARD_TEXT[conditionID].TEXT} 장소`;
+    entry.ID === 'NOT_SELECTED' ? entry.TEXT : `${entry.TEXT} 장소`;
+  console.log(entry);
 
   return (
     <div
