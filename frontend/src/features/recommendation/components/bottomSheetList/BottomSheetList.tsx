@@ -19,7 +19,8 @@ function BottomSheetList({
   recommendedLocations,
   onSpotClick,
 }: BottomSheetListProps) {
-  const { conditionID } = getMeetingStorage();
+  const { conditionID: storedConditionID } = getMeetingStorage();
+  const conditionID = storedConditionID ?? 'NOT_SELECTED';
 
   return (
     <>
