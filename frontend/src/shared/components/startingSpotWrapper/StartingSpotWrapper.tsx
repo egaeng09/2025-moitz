@@ -13,13 +13,16 @@ interface StaringSpotWrapperProps {
   conditionID: LocationRequirement;
 }
 
+const getCustomConditionIdText = (id: LocationRequirement) => {
+  const entry = CONDITION_CARD_TEXT[id];
+  return entry.ID === 'NOT_SELECTED' ? entry.TEXT : `${entry.TEXT} 장소`;
+};
+
 function StartingSpotWrapper({
   startingPlaces,
   conditionID,
 }: StaringSpotWrapperProps) {
-  const entry = CONDITION_CARD_TEXT[conditionID];
-  const conditionIdText =
-    entry.ID === 'NOT_SELECTED' ? entry.TEXT : `${entry.TEXT} 장소`;
+  const conditionIdText = getCustomConditionIdText(conditionID);
 
   return (
     <div
