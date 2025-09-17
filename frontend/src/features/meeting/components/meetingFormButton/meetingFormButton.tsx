@@ -14,10 +14,10 @@ function MeetingFormBottomButton({ active }: { active: boolean }) {
 
   return (
     <BottomButton
+      ref={buttonRef}
       type="submit"
       text="모임 지역 찾기"
       active={active}
-      ref={buttonRef}
     />
   );
 }

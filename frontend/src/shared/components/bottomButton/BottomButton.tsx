@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 
 import { flex, typography } from '@shared/styles/default.styled';
 
@@ -21,10 +21,7 @@ interface ButtonBottomButtonProps extends BaseBottomButtonProps {
 
 type BottomButtonProps = SubmitBottomButtonProps | ButtonBottomButtonProps;
 
-function BottomButton(
-  { type, text, active, onClick }: BottomButtonProps,
-  ref: React.Ref<HTMLButtonElement>,
-) {
+function BottomButton({ ref, type, text, active, onClick }: BottomButtonProps) {
   return (
     <button
       ref={ref}
@@ -41,4 +38,4 @@ function BottomButton(
   );
 }
 
-export default forwardRef<HTMLButtonElement, BottomButtonProps>(BottomButton);
+export default BottomButton;
