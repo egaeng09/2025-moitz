@@ -24,6 +24,8 @@ export const path = (
   totalTravelTime: number,
 ) => css`
   width: ${(travelTime / totalTravelTime) * 100}%;
+  min-width: 30px;
+  flex-shrink: 1;
   height: 15px;
   padding: 0 5px;
   background-color: ${lineCode
@@ -34,4 +36,5 @@ export const path = (
 
 export const text = (lineCode: string) => css`
   color: ${lineCode ? colorToken.gray[8] : colorToken.gray[5]};
+  white-space: nowrap;
 `;
