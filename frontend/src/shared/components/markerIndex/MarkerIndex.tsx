@@ -1,5 +1,7 @@
 import { flex, typography, shadow } from '@shared/styles/default.styled';
 
+import IconUser from '@icons/icon-marker-user.svg';
+
 import * as marker from './markerIndex.styled';
 
 interface MarkerIndexProps {
@@ -17,10 +19,13 @@ function MarkerIndex({
   hasStroke = false,
   hasShadow = false,
 }: MarkerIndexProps) {
-  const circle_type =
-    type === 'recommended' ? marker.circle_recommended : marker.circle_starting;
-  const label_type =
-    type === 'recommended' ? marker.label_recommended : marker.label_starting;
+  const isRecommended = type === 'recommended';
+  const circle_type = isRecommended
+    ? marker.circle_recommended
+    : marker.circle_starting;
+  const label_type = isRecommended
+    ? marker.label_recommended
+    : marker.label_starting;
 
   return (
     <div
@@ -42,7 +47,11 @@ function MarkerIndex({
           hasShadow && shadow.map,
         ]}
       >
-        <span css={[typography.h3, marker.circle_font()]}>{index}</span>
+        {isRecommended ? (
+          <span css={[typography.h3, marker.circle_font()]}>{index}</span>
+        ) : (
+          <img src={IconUser} alt="icon-marker-user" draggable={false} />
+        )}
       </div>
       {label && <p css={[marker.label_base(), label_type()]}>{label}</p>}
     </div>
