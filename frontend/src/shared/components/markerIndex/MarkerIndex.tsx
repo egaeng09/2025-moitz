@@ -34,7 +34,7 @@ function MarkerIndex({
           direction: 'column',
           justify: 'center',
           align: 'center',
-          gap: 6,
+          gap: 4,
         }),
       ]}
     >
@@ -54,7 +54,7 @@ function MarkerIndex({
         )}
       </div>
       {label && (
-        <p css={[typography.sh3, marker.label_base(), label_type()]}>{label}</p>
+        <p css={[typography.sh2, marker.label_base(), label_type()]}>{label}</p>
       )}
     </div>
   );
