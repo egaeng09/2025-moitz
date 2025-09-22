@@ -35,10 +35,11 @@ public class SetupService {
     private final PlaceFinder placeFinder;
 
     public void setup() {
-        log.info("SubwayMapPathFinder 초기화 시작");
+        log.info("SubwayEdges 초기화 시작");
 
         // 지하철 노선도 데이터 존재하는지 확인
         if (subwayStationService.getCount() > 0 && subwayEdgeService.getCount() > 0) {
+            log.info("DB에 데이터가 있습니다. 저장된 데이터를 사용합니다. 서비스 시작.");
             return;
         }
 
@@ -69,6 +70,7 @@ public class SetupService {
 
         // 엣지 데이터 저장
         subwayEdgeService.saveAll(subwayEdges);
+        log.info("SubwayEdges 초기화 완료. 서비스 시작.");
     }
 
     private SubwayEdges assembleSubwayStations(final List<SubwayStation> stations, final List<RawRouteInfo> rawRoutes) {
