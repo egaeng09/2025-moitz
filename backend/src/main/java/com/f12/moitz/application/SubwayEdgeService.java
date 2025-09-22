@@ -2,6 +2,7 @@ package com.f12.moitz.application;
 
 import com.f12.moitz.domain.repository.SubwayEdgeRepository;
 import com.f12.moitz.domain.subway.SubwayEdges;
+import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,7 @@ public class SubwayEdgeService {
         return subwayEdgeRepository.count();
     }
 
+    public SubwayEdges getSubwayEdges() {
+        return new SubwayEdges(new HashSet<>(subwayEdgeRepository.findAll()));
+    }
 }

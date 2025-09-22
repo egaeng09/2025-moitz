@@ -42,7 +42,7 @@ public class SetupService {
             return;
         }
 
-        // 전체 삭제 혹은 비교해서 필요한 것만 저장하도록 해야 함.
+        // TODO: 비교해서 필요한 것만 저장하도록 해야 할듯?
 
         // 지하철 데이터 로딩
         final List<RawRouteInfo> rawRoutes = subwayMapLoader.loadRawRoutes();

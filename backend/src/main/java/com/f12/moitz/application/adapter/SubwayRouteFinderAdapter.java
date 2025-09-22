@@ -1,31 +1,38 @@
 package com.f12.moitz.application.adapter;
 
+import com.f12.moitz.application.SubwayEdgeService;
 import com.f12.moitz.application.SubwayStationService;
 import com.f12.moitz.application.port.RouteFinder;
 import com.f12.moitz.application.port.dto.StartEndPair;
 import com.f12.moitz.domain.Path;
 import com.f12.moitz.domain.Route;
-import com.f12.moitz.domain.repository.SubwayEdgeRepository;
 import com.f12.moitz.domain.subway.SubwayEdges;
 import com.f12.moitz.domain.subway.SubwayPath;
 import com.f12.moitz.domain.subway.SubwayStation;
-import java.util.HashSet;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class SubwayRouteFinderAdapter implements RouteFinder {
 
     private final SubwayStationService subwayStationService;
-    private final SubwayEdgeRepository subwayEdgeRepository;
+    private final SubwayEdgeService subwayEdgeService;
+    private final SubwayEdges subwayEdges;
+
+    public SubwayRouteFinderAdapter(
+            @Autowired final SubwayStationService subwayStationService,
+            @Autowired final SubwayEdgeService subwayEdgeService
+    ) {
+        this.subwayStationService = subwayStationService;
+        this.subwayEdgeService = subwayEdgeService;
+        this.subwayEdges = subwayEdgeService.getSubwayEdges();
+    }
 
     @Override
     public List<Route> findRoutes(final List<StartEndPair> placePairs) {
-        final SubwayEdges subwayEdges = new SubwayEdges(new HashSet<>(subwayEdgeRepository.findAll()));
         return placePairs.stream()
                 .map(pair -> {
                     final SubwayStation startStation = subwayStationService.findByName(pair.start().getName());

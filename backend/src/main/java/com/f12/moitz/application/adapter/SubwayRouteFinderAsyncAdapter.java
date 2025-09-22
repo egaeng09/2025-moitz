@@ -1,5 +1,6 @@
 package com.f12.moitz.application.adapter;
 
+import com.f12.moitz.application.SubwayEdgeService;
 import com.f12.moitz.application.SubwayStationService;
 import com.f12.moitz.application.port.AsyncRouteFinder;
 import com.f12.moitz.application.port.dto.StartEndPair;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -22,12 +24,20 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class SubwayRouteFinderAsyncAdapter implements AsyncRouteFinder {
 
     private final SubwayStationService subwayStationService;
-    private final SubwayEdgeRepository subwayEdgeRepository;
+    private final SubwayEdgeService subwayEdgeService;
+    private final SubwayEdges subwayEdges;
 
+    public SubwayRouteFinderAsyncAdapter(
+            @Autowired final SubwayStationService subwayStationService,
+            @Autowired final SubwayEdgeService subwayEdgeService
+    ) {
+        this.subwayStationService = subwayStationService;
+        this.subwayEdgeService = subwayEdgeService;
+        this.subwayEdges = subwayEdgeService.getSubwayEdges();
+    }
     @Async("asyncTaskExecutor")
     @Override
     public CompletableFuture<List<Route>> findRoutesAsync(final List<StartEndPair> placePairs) {
@@ -36,8 +46,6 @@ public class SubwayRouteFinderAsyncAdapter implements AsyncRouteFinder {
 
     @Override
     public List<Route> findRoutes(final List<StartEndPair> placePairs) {
-        final SubwayEdges subwayEdges = new SubwayEdges(new HashSet<>(subwayEdgeRepository.findAll()));
-
         return Flux.fromIterable(placePairs)
                 .flatMapSequential(pair -> {
                             final SubwayStation startStation = subwayStationService.findByName(pair.start().getName());
