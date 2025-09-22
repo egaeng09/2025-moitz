@@ -10,6 +10,7 @@ import com.f12.moitz.application.port.dto.ReasonAndDescription;
 import com.f12.moitz.domain.Candidate;
 import com.f12.moitz.domain.Path;
 import com.f12.moitz.domain.Place;
+import com.f12.moitz.domain.RecommendCondition;
 import com.f12.moitz.domain.Recommendation;
 import com.f12.moitz.domain.RecommendedPlace;
 import com.f12.moitz.domain.Route;
@@ -25,8 +26,9 @@ public class RecommendationMapper {
 
     public RecommendationsResponse toResponse(final Result result) {
         final int minTime = result.getBestRecommendationTime();
-
+        final String condition = getCondition(result);
         return new RecommendationsResponse(
+                condition,
                 IntStream.range(0, result.getStartingPlacesCount())
                         .mapToObj(index -> toStartingPlaceResponse(index, result.getStartingPlaces().get(index)))
                         .toList(),
@@ -37,6 +39,14 @@ public class RecommendationMapper {
                         })
                         .toList()
         );
+    }
+
+    private String getCondition(final Result result) {
+        final RecommendCondition recommendCondition =
+                result.getRecommendCondition() == null ? RecommendCondition.NOT_SELECTED
+                : result.getRecommendCondition();
+
+        return recommendCondition.getTitle();
     }
 
     public Recommendation toRecommendation(
@@ -58,10 +68,12 @@ public class RecommendationMapper {
     }
 
     public Result toResult(
+            final RecommendCondition recommendCondition,
             final List<? extends Place> startingPlaces,
             final Recommendation recommendation
     ) {
         return new Result(
+                recommendCondition,
                 startingPlaces,
                 recommendation
         );

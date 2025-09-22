@@ -62,7 +62,8 @@ public class RecommendationService {
         StopWatch stopWatch = new StopWatch("추천 서비스 전체");
 
         stopWatch.start("지역 추천");
-        final String requirement = RecommendCondition.fromTitle(request.requirement()).getKeyword();
+        final RecommendCondition recommendCondition = RecommendCondition.fromTitle(request.requirement());
+        final String requirement = recommendCondition.getKeyword();
         final List<SubwayStation> startingPlaces = subwayStationService.findByNames(request.startingPlaceNames());
 
         final RecommendedLocationsResponse recommendedLocationsResponse = locationRecommender.recommendLocations(
@@ -108,6 +109,7 @@ public class RecommendationService {
 
         return recommendResultRepository.saveAndReturnId(
                 recommendationMapper.toResult(
+                        recommendCondition,
                         startingPlaces,
                         recommendation
                 )

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class SubwayRouteFinderAdapter implements RouteFinder {
 
     private final SubwayStationService subwayStationService;
-    private final SubwayEdgeService subwayEdgeService;
     private final SubwayEdges subwayEdges;
 
     public SubwayRouteFinderAdapter(
@@ -27,7 +26,6 @@ public class SubwayRouteFinderAdapter implements RouteFinder {
             @Autowired final SubwayEdgeService subwayEdgeService
     ) {
         this.subwayStationService = subwayStationService;
-        this.subwayEdgeService = subwayEdgeService;
         this.subwayEdges = subwayEdgeService.getSubwayEdges();
     }
 
