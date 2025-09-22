@@ -36,4 +36,5 @@ public class SubwayStationService {
     public void saveAll(final List<SubwayStation> subwayStations) {
         subwayStationRepository.saveAll(subwayStations);
     }
+
 }
