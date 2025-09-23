@@ -60,6 +60,7 @@ public class RecommendationService {
 
     public String recommendLocation(final RecommendationRequest request) {
         StopWatch stopWatch = new StopWatch("추천 서비스 전체");
+        log.debug("추천 서비스 시작");
 
         stopWatch.start("지역 추천");
         final RecommendCondition recommendCondition = RecommendCondition.fromTitle(request.requirement());
@@ -105,7 +106,7 @@ public class RecommendationService {
                 placeRoutes
         );
         stopWatch.stop();
-        System.out.println(stopWatch.prettyPrint());
+        log.debug("추천 서비스 완료. {}", stopWatch.shortSummary());
 
         return recommendResultRepository.saveAndReturnId(
                 recommendationMapper.toResult(
@@ -157,7 +158,7 @@ public class RecommendationService {
 
     public RecommendationsResponse findResultById(final String id) {
         final Result result = recommendResultRepository.findById(new ObjectId(id))
-                .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 결과를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 결과를 찾을 수 없습니다. id: " + id));
         return recommendationMapper.toResponse(result);
     }
 
