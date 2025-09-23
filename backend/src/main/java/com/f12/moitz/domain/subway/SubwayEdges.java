@@ -80,7 +80,8 @@ public class SubwayEdges {
                 }
 
                 if (times.get(current.station) == null || times.get(neighbor) == null) {
-                    throw new IllegalStateException("출발역 혹은 도착역에 도달하는 시간이 초기화되지 않았습니다.");
+                    log.warn("출발역({}) 혹은 도착역({})에 도달하는 시간이 초기화되지 않았습니다.", currentStation.getName(), neighbor.getName());
+                    continue;
                 }
 
                 int newTime = times.get(current.station) + edge.getTimeInSeconds();
@@ -95,9 +96,10 @@ public class SubwayEdges {
                         }
                     }
                     if (transferEdge == null) {
-                        log.error("현재역: {}, 다음역: {}, 환승호선: {} -> {}", current.station.getName(), neighbor.getName(),
+                        log.warn("환승 Edge가 존재하지 않아 경로를 건너뜁니다. 현재역: {}, 다음역: {}, 환승호선: {} -> {}",
+                                current.station.getName(), neighbor.getName(),
                                 edgeLines.get(currentStation).getTitle(), edge.getSubwayLine().getTitle());
-                        throw new IllegalStateException("환승 시간을 계산할 환승 Edge가 존재하지 않습니다.");
+                        continue;
                     }
 
                     newTime += transferEdge.getTimeInSeconds();
