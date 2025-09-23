@@ -79,25 +79,25 @@ public class SubwayEdges {
                     continue;
                 }
 
-                if (times.get(current.station) == null || times.get(neighbor) == null) {
+                if (times.get(currentStation) == null || times.get(neighbor) == null) {
                     log.warn("출발역({}) 혹은 도착역({})에 도달하는 시간이 초기화되지 않았습니다.", currentStation.getName(), neighbor.getName());
                     continue;
                 }
 
-                int newTime = times.get(current.station) + edge.getTimeInSeconds();
+                int newTime = times.get(currentStation) + edge.getTimeInSeconds();
 
                 // 환승 시간 추가
-                if (!start.equals(current.station) && !edgeLines.get(current.station).equals(edge.getSubwayLine())) {
+                if (!start.equals(currentStation) && !edgeLines.get(currentStation).equals(edge.getSubwayLine())) {
                     Edge transferEdge = null;
                     for (Edge currentEdge : getEdges(currentStation)) {
-                        if (currentEdge.isTowards(current.station) && currentEdge.isSameLine(edge.getSubwayLine())) {
+                        if (currentEdge.isTowards(currentStation) && currentEdge.isSameLine(edge.getSubwayLine())) {
                             transferEdge = currentEdge;
                             break;
                         }
                     }
                     if (transferEdge == null) {
                         log.warn("환승 Edge가 존재하지 않아 경로를 건너뜁니다. 현재역: {}, 다음역: {}, 환승호선: {} -> {}",
-                                current.station.getName(), neighbor.getName(),
+                                currentStation.getName(), neighbor.getName(),
                                 edgeLines.get(currentStation).getTitle(), edge.getSubwayLine().getTitle());
                         continue;
                     }
@@ -107,7 +107,7 @@ public class SubwayEdges {
 
                 if (newTime < times.get(neighbor)) {
                     times.put(neighbor, newTime);
-                    prev.put(neighbor, current.station);
+                    prev.put(neighbor, currentStation);
                     edgeLines.put(neighbor, edge.getSubwayLine()); // 이 역에 도달한 호선 저장
                     pq.add(new Node(neighbor, newTime));
                 }
