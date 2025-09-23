@@ -59,10 +59,10 @@ export const useProgress = ({
   }, []);
 
   /**
-   * 프로그레스바의 기본 진행 애니메이션을 처리하는 effect
-   * 주의: 이미 PROGRESS_MAX_VALUE에 도달한 경우 애니메이션을 시작하지 않습니다.
+   * 파라미터 유효성 검사
+   * @throws {Error} - 파라미터가 유효하지 않은 경우 에러 발생
    */
-  useEffect(() => {
+  const validateParams = () => {
     if (duration <= 0) {
       throw new Error('duration must be greater than 0');
     }
@@ -84,6 +84,14 @@ export const useProgress = ({
         `Target progress must be between ${PROGRESS_MIN_VALUE} and ${PROGRESS_MAX_VALUE}`,
       );
     }
+  };
+
+  /**
+   * 프로그레스바의 기본 진행 애니메이션을 처리하는 effect
+   * 주의: 이미 PROGRESS_MAX_VALUE에 도달한 경우 애니메이션을 시작하지 않습니다.
+   */
+  useEffect(() => {
+    validateParams();
 
     if (progress !== PROGRESS_MAX_VALUE) {
       animate(duration, initialProgress, targetProgress);
