@@ -266,11 +266,11 @@ public class SetupService {
 
     private void addCircularEdges(final SubwayEdges subwayEdges) {
         final SubwayStation eungam = subwayEdges.getStationByName("응암역");
-        final SubwayStation yeokchon = subwayStationService.findByName("역촌역");
+        final SubwayStation yeokchon = subwayStationService.getByName("역촌역");
         final SubwayStation bulgwang = subwayEdges.getStationByName("불광역");
-        final SubwayStation dokbawi = subwayStationService.findByName("독바위역");
+        final SubwayStation dokbawi = subwayStationService.getByName("독바위역");
         final SubwayStation yeonsinnae = subwayEdges.getStationByName("연신내역");
-        final SubwayStation gusan = subwayStationService.findByName("구산역");
+        final SubwayStation gusan = subwayStationService.getByName("구산역");
 
         subwayEdges.addEdge(eungam, new Edge(yeokchon, 120, 0, SubwayLine.SEOUL_METRO_LINE6.getTitle()));
         subwayEdges.addEdge(yeokchon, new Edge(bulgwang, 120, 0, SubwayLine.SEOUL_METRO_LINE6.getTitle()));
