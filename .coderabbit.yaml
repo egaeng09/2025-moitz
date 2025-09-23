@@ -47,7 +47,7 @@ path_instructions:
       6. 리뷰는 신입 개발자가 이해하고 학습할 수 있도록 설명 중심으로 작성
     tools:
       checkstyle:
-        enabled: true
+        enabled: false
       spotbugs:
         enabled: true
       gitleaks:
