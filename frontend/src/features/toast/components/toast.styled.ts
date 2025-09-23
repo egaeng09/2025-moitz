@@ -22,7 +22,7 @@ const slideDown = () => keyframes`
 `;
 
 export const container = () => css`
-  width: fit-content;
+  width: max-content;
   position: fixed;
   top: 20px;
   left: 50%;
