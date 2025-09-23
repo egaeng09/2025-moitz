@@ -15,6 +15,7 @@ reviews:
     enabled: true
     auto_incremental_review: false
     drafts: false
+    ignore_updates: true
 
 path_filters:
   - "!node_modules/"
