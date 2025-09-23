@@ -88,7 +88,7 @@ const useLocations = (): useLocationsReturn => {
         setIsProgressLoading(false);
       }
     },
-    [],
+    [getRecommendationId, getRecommendationResult],
   );
 
   return {
