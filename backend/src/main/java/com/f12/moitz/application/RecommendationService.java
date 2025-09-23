@@ -66,7 +66,9 @@ public class RecommendationService {
         final List<SubwayStation> startingPlaces = subwayStationService.findByNames(request.startingPlaceNames());
 
         final List<SubwayStation> candidatePlace = subwayStationService.generateCandidatePlace(startingPlaces);
-        log.info(candidatePlace.toString());
+
+        log.info("CandidatePlace : {}", candidatePlace);
+
         final RecommendedLocationsResponse recommendedLocationsResponse = locationRecommender.recommendLocations(
                 request.startingPlaceNames(),
                 requirement

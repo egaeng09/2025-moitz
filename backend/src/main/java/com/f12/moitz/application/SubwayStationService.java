@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPoint;
@@ -20,8 +21,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SubwayStationService {
 
+    private final static int DISTANCE_VALUE = 5;
+
     private final SubwayStationRepository subwayStationRepository;
-    private GeometryFactory geometryFactory;
+    private final GeometryFactory geometryFactory;
 
     public List<SubwayStationEntity> findAll() {
         return subwayStationRepository.findAll();
@@ -51,26 +54,33 @@ public class SubwayStationService {
                 .map(SubwayStationEntity::toFromSubwayStation)
                 .toList();
 
-        Coordinate[] coordinateArr = stationEntities.stream()
+        Coordinate[] coordinateArr = getCoordinates(stationEntities);
+
+        org.springframework.data.geo.Point center = getCenterPoint(coordinateArr);
+
+        Distance distance = new Distance(DISTANCE_VALUE, Metrics.KILOMETERS);
+
+        return subwayStationRepository.findByPointNear(center, distance).stream()
+                .map(SubwayStationEntity::toDomain)
+                .toList();
+    }
+
+    private Coordinate[] getCoordinates(List<SubwayStationEntity> stationEntities) {
+        return stationEntities.stream()
                 .map(place -> {
                     List<Double> coordinates = place.getPoint().getCoordinates();
                     return new Coordinate(coordinates.get(0), coordinates.get(1));
                 })
                 .toArray(Coordinate[]::new);
+    }
 
+    private org.springframework.data.geo.Point getCenterPoint(Coordinate[] coordinateArr) {
         MultiPoint multiPoint = geometryFactory.createMultiPointFromCoords(coordinateArr);
 
         Point centroid = multiPoint.getCentroid();
 
         log.info("centroid : {}", centroid.getX() + " "  + centroid.getY());
 
-        org.springframework.data.geo.Point center =
-                new org.springframework.data.geo.Point(centroid.getX(), centroid.getY());
-
-        Distance distance = new Distance(5, Metrics.KILOMETERS);
-
-        return subwayStationRepository.findByPointNear(center, distance).stream()
-                .map(SubwayStationEntity::toDomain)
-                .toList();
+        return new org.springframework.data.geo.Point(centroid.getX(), centroid.getY());
     }
 }
