@@ -32,7 +32,7 @@ jobs:
           rm -rf src/main/resources/application-db.properties
           echo "$APPLICATION_DB_PROPERTIES" > src/main/resources/application-db.properties
 
-          ./gradlew --no-build-cache clean build --refresh-dependencies
+          ./gradlew --no-build-cache clean build --refresh-dependencies -Dspring.profiles.active=dev
 
           if [ $? -ne 0 ]; then
             echo "빌드 실패"
