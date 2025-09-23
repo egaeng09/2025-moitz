@@ -25,11 +25,11 @@ function MeetingForm() {
     addDepartureWithValidation,
     removeDepartureAtIndex,
     updateConditionID,
-    validateFormSubmit
+    validateFormSubmit,
   } = useFormInfo();
   const { isVisible, message, showToast } = useToast();
 
-  const { getRecommendation } = useLocationsContext();
+  const { getRecommendationFull } = useLocationsContext();
 
   const showValidationError = (error: ValidationError) => {
     if (!error.isValid) {
@@ -60,9 +60,9 @@ function MeetingForm() {
     }
 
     try {
-      const { id } = await getRecommendation({
+      const { id } = await getRecommendationFull({
         startingPlaceNames: departureList,
-        requirement: conditionID
+        requirement: conditionID,
       });
 
       if (id) navigate(`/result/${id}`);

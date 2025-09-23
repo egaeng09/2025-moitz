@@ -15,7 +15,7 @@ export type useLocationsReturn = {
     requestBody: RecommendationRequestBody,
   ) => Promise<string>;
   getRecommendationResult: (id: string) => Promise<Location>;
-  getRecommendation: (
+  getRecommendationFull: (
     requestBody: RecommendationRequestBody,
   ) => Promise<{ id: string; data: Location }>;
 };
@@ -69,7 +69,7 @@ const useLocations = (): useLocationsReturn => {
     }
   }, []);
 
-  const getRecommendation = useCallback(
+  const getRecommendationFull = useCallback(
     async (requestBody: RecommendationRequestBody) => {
       setIsProgressLoading(true);
       setData(initialData);
@@ -99,7 +99,7 @@ const useLocations = (): useLocationsReturn => {
     errorMessage,
     getRecommendationId,
     getRecommendationResult,
-    getRecommendation,
+    getRecommendationFull,
   };
 };
 
