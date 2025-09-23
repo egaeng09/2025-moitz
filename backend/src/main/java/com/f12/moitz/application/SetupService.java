@@ -202,9 +202,10 @@ public class SetupService {
         log.debug("능곡역 환승 Edge 추가됨: 경의중앙선, 서해선");
 
         final SubwayStation daegok = subwayEdges.getStationByName("대곡역");
+        subwayEdges.addEdge(daegok, new Edge(daegok, 600, 0, SubwayLine.GYEONGUI_JOUNGANG.getTitle()));
         subwayEdges.addEdge(daegok, new Edge(daegok, 600, 0, SubwayLine.SEOHAE_LINE.getTitle()));
         subwayEdges.addEdge(daegok, new Edge(daegok, 300, 0, SubwayLine.GTX_A.getTitle()));
-        log.debug("대곡역 환승 Edge 추가됨: 서해선, GTX-A");
+        log.debug("대곡역 환승 Edge 추가됨: 경의중앙선, 서해선, GTX-A");
 
         final SubwayStation goksan = subwayEdges.getStationByName("곡산역");
         subwayEdges.addEdge(goksan, new Edge(goksan, 600, 0, SubwayLine.GYEONGUI_JOUNGANG.getTitle()));
@@ -254,7 +255,8 @@ public class SetupService {
     }
 
     private void addCircularStations() {
-        final List<SubwayStation> missingStations = placeFinder.findPlacesByNames(List.of("역촌역", "독바위역", "구산역")).stream()
+        final List<SubwayStation> missingStations = placeFinder.findPlacesByNames(List.of("역촌역", "독바위역", "구산역"))
+                .stream()
                 .map(place -> new SubwayStation(place.getName(), place.getPoint()))
                 .toList();
 
