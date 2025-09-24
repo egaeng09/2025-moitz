@@ -15,14 +15,7 @@ function IndexPage() {
     useLocationsContext();
 
   if (isError)
-    return (
-      <FallBackPage
-        reset={() => {
-          window.location.reload();
-        }}
-        error={new Error(errorMessage)}
-      />
-    );
+    return <FallBackPage reset={() => {}} error={new Error(errorMessage)} />;
 
   if (isProgressLoading) {
     return (
