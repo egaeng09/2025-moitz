@@ -9,6 +9,9 @@ import com.f12.moitz.application.port.RouteFinder;
 import com.f12.moitz.application.port.dto.ReasonAndDescription;
 import com.f12.moitz.application.port.dto.StartEndPair;
 import com.f12.moitz.application.utils.RecommendationMapper;
+import com.f12.moitz.common.error.exception.BadRequestException;
+import com.f12.moitz.common.error.exception.GeneralErrorCode;
+import com.f12.moitz.common.error.exception.NotFoundException;
 import com.f12.moitz.domain.Place;
 import com.f12.moitz.domain.RecommendCondition;
 import com.f12.moitz.domain.Recommendation;
@@ -60,10 +63,12 @@ public class RecommendationService {
 
     public String recommendLocation(final RecommendationRequest request) {
         StopWatch stopWatch = new StopWatch("추천 서비스 전체");
+        log.debug("추천 서비스 시작");
 
         stopWatch.start("지역 추천");
-        final String requirement = RecommendCondition.fromTitle(request.requirement()).getKeyword();
-        final List<SubwayStation> startingPlaces = subwayStationService.findByNames(request.startingPlaceNames());
+        final RecommendCondition recommendCondition = RecommendCondition.fromTitle(request.requirement());
+        final String requirement = recommendCondition.getKeyword();
+        final List<SubwayStation> startingPlaces = getByNames(request.startingPlaceNames());
 
         final RecommendedLocationsResponse recommendedLocationsResponse = locationRecommender.recommendLocations(
                 request.startingPlaceNames(),
@@ -72,7 +77,7 @@ public class RecommendationService {
         final Map<Place, ReasonAndDescription> generatedPlacesWithReason = recommendedLocationsResponse.recommendations()
                 .stream()
                 .collect(Collectors.toMap(
-                        recommendation -> subwayStationService.findByName(recommendation.locationName()),
+                        recommendation -> subwayStationService.getByName(recommendation.locationName()),
                         recommendation -> new ReasonAndDescription(
                                 recommendation.reason(),
                                 recommendation.description()
@@ -104,17 +109,25 @@ public class RecommendationService {
                 placeRoutes
         );
         stopWatch.stop();
-        System.out.println(stopWatch.prettyPrint());
+        log.debug("추천 서비스 완료. {}", stopWatch.shortSummary());
 
         return recommendResultRepository.saveAndReturnId(
                 recommendationMapper.toResult(
+                        recommendCondition,
                         startingPlaces,
                         recommendation
                 )
         ).toHexString().toUpperCase();
     }
 
-    public Map<Place, Routes> findRoutesForAllAsync(
+    private List<SubwayStation> getByNames(final List<String> names) {
+        return names.stream()
+                .map(name -> subwayStationService.findByName(name)
+                        .orElseThrow(() -> new BadRequestException(GeneralErrorCode.INPUT_INVALID_START_LOCATION)))
+                .toList();
+    }
+
+    private Map<Place, Routes> findRoutesForAllAsync(
             final List<? extends Place> startingPlaces,
             final List<Place> generatedPlaces
     ) {
@@ -153,9 +166,9 @@ public class RecommendationService {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public RecommendationsResponse findResultById(final String id) {
+    public RecommendationsResponse getById(final String id) {
         final Result result = recommendResultRepository.findById(new ObjectId(id))
-                .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 결과를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(GeneralErrorCode.INPUT_INVALID_RESULT));
         return recommendationMapper.toResponse(result);
     }
 

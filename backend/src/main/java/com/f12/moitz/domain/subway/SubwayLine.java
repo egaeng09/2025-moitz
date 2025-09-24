@@ -15,21 +15,21 @@ public enum SubwayLine {
     SEOUL_METRO_LINE7("7호선"),
     SEOUL_METRO_LINE8("8호선"),
     SEOUL_METRO_LINE9("9호선"),
-    GTX_A("GTX_A"),
+    GTX_A("GTX-A"),
     AIRPORT_RAILROAD("공항철도"),
     GYEONGUI_JOUNGANG("경의중앙선"),
-    EVERLINE("용인 에버라인"),
+    EVERLINE("용인에버라인"),
     GYEONGCHUN("경춘선"),
     SIN_BUNDANG("신분당선"),
-    UIJEONGBU_LRT("의정부 경전철"),
+    UIJEONGBU_LRT("의정부경전철"),
     GYEONGGANG("경강선"),
-    WOOE_SINSEUL_LRT("우이 신설선"),
+    WOOE_SINSEUL_LRT("우이신설선"),
     SEOHAE_LINE("서해선"),
     GIMPO_LRT("김포골드라인"),
     SUIN_BUNDANG("수인분당선"),
     SILLIM_LRT("신림선"),
-    INCHEON1("인천 1호선"),
-    INCHEON2("인천 2호선");
+    INCHEON1("인천1호선"),
+    INCHEON2("인천2호선");
 
     private final String title;
 

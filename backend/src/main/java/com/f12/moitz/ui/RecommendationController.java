@@ -26,7 +26,7 @@ public class RecommendationController implements SwaggerRecommendationController
 
     @GetMapping("/{id}")
     public ResponseEntity<RecommendationsResponse> getRecommendationResult(@PathVariable("id") String id){
-        RecommendationsResponse response = recommendationService.findResultById(id);
+        RecommendationsResponse response = recommendationService.getById(id);
         return ResponseEntity.ok().body(response);
     }
 

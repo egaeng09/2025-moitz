@@ -6,15 +6,12 @@ import com.f12.moitz.application.port.AsyncRouteFinder;
 import com.f12.moitz.application.port.dto.StartEndPair;
 import com.f12.moitz.domain.Path;
 import com.f12.moitz.domain.Route;
-import com.f12.moitz.domain.repository.SubwayEdgeRepository;
 import com.f12.moitz.domain.subway.SubwayEdges;
 import com.f12.moitz.domain.subway.SubwayPath;
 import com.f12.moitz.domain.subway.SubwayStation;
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -27,7 +24,6 @@ import reactor.core.publisher.Mono;
 public class SubwayRouteFinderAsyncAdapter implements AsyncRouteFinder {
 
     private final SubwayStationService subwayStationService;
-    private final SubwayEdgeService subwayEdgeService;
     private final SubwayEdges subwayEdges;
 
     public SubwayRouteFinderAsyncAdapter(
@@ -35,9 +31,9 @@ public class SubwayRouteFinderAsyncAdapter implements AsyncRouteFinder {
             @Autowired final SubwayEdgeService subwayEdgeService
     ) {
         this.subwayStationService = subwayStationService;
-        this.subwayEdgeService = subwayEdgeService;
         this.subwayEdges = subwayEdgeService.getSubwayEdges();
     }
+
     @Async("asyncTaskExecutor")
     @Override
     public CompletableFuture<List<Route>> findRoutesAsync(final List<StartEndPair> placePairs) {
@@ -48,8 +44,8 @@ public class SubwayRouteFinderAsyncAdapter implements AsyncRouteFinder {
     public List<Route> findRoutes(final List<StartEndPair> placePairs) {
         return Flux.fromIterable(placePairs)
                 .flatMapSequential(pair -> {
-                            final SubwayStation startStation = subwayStationService.findByName(pair.start().getName());
-                            final SubwayStation endStation = subwayStationService.findByName(pair.end().getName());
+                            final SubwayStation startStation = subwayStationService.getByName(pair.start().getName());
+                            final SubwayStation endStation = subwayStationService.getByName(pair.end().getName());
                             return Mono.delay(Duration.ofMillis(50))
                                     .then(convertPath(
                                             subwayEdges.findShortestTimePath(startStation, endStation)

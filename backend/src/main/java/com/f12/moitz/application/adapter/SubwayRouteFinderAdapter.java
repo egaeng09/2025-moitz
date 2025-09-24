@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class SubwayRouteFinderAdapter implements RouteFinder {
 
     private final SubwayStationService subwayStationService;
-    private final SubwayEdgeService subwayEdgeService;
     private final SubwayEdges subwayEdges;
 
     public SubwayRouteFinderAdapter(
@@ -27,7 +26,6 @@ public class SubwayRouteFinderAdapter implements RouteFinder {
             @Autowired final SubwayEdgeService subwayEdgeService
     ) {
         this.subwayStationService = subwayStationService;
-        this.subwayEdgeService = subwayEdgeService;
         this.subwayEdges = subwayEdgeService.getSubwayEdges();
     }
 
@@ -35,8 +33,8 @@ public class SubwayRouteFinderAdapter implements RouteFinder {
     public List<Route> findRoutes(final List<StartEndPair> placePairs) {
         return placePairs.stream()
                 .map(pair -> {
-                    final SubwayStation startStation = subwayStationService.findByName(pair.start().getName());
-                    final SubwayStation endStation = subwayStationService.findByName(pair.end().getName());
+                    final SubwayStation startStation = subwayStationService.getByName(pair.start().getName());
+                    final SubwayStation endStation = subwayStationService.getByName(pair.end().getName());
                     return new Route(
                             convertPath(subwayEdges.findShortestTimePath(startStation, endStation))
                     );

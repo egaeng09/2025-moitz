@@ -27,6 +27,7 @@ import com.f12.moitz.domain.repository.RecommendResultRepository;
 import com.f12.moitz.infrastructure.client.gemini.dto.RecommendedLocationResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,12 +77,11 @@ class RecommendationServiceTest {
     @DisplayName("추천 요청 시 올바른 최종 결과를 저장해야 한다")
     void recommendLocation_Success() {
         // Given
-
         final RecommendationRequest request = new RecommendationRequest(List.of("강남역", "역삼역"), "CHAT");
         final SubwayStation gangnam = new SubwayStation("강남역", new Point(127.027, 37.497));
         final SubwayStation yeoksam = new SubwayStation("역삼역", new Point(127.036, 37.501));
-        final List<SubwayStation> startingPlaces = List.of(gangnam, yeoksam);
-        given(subwayStationService.findByNames(anyList())).willReturn(startingPlaces);
+        given(subwayStationService.findByName("강남역")).willReturn(Optional.of(gangnam));
+        given(subwayStationService.findByName("역삼역")).willReturn(Optional.of(yeoksam));
 
         final RecommendedLocationsResponse mockLocationsResponse = new RecommendedLocationsResponse(List.of(
                 new RecommendedLocationResponse("선릉역", "이유1", "설명1"),
@@ -90,8 +90,8 @@ class RecommendationServiceTest {
 
         final SubwayStation seolleung = new SubwayStation("선릉역", new Point(127.048, 37.504));
         final SubwayStation samsung = new SubwayStation("삼성역", new Point(127.063, 37.508));
-        given(subwayStationService.findByName("선릉역")).willReturn(seolleung);
-        given(subwayStationService.findByName("삼성역")).willReturn(samsung);
+        given(subwayStationService.getByName("선릉역")).willReturn(seolleung);
+        given(subwayStationService.getByName("삼성역")).willReturn(samsung);
 
         Map<Place, List<RecommendedPlace>> mockRecommendedPlaces = Map.of(
                 seolleung, List.of(new RecommendedPlace("스타벅스 선릉점", new Point(127.048, 37.504), "카페", 5, "url")),
@@ -125,4 +125,5 @@ class RecommendationServiceTest {
                 .collect(Collectors.toList()))
                 .containsExactlyInAnyOrder("선릉역", "삼성역");
     }
+
 }

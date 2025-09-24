@@ -125,7 +125,7 @@ public class OpenApiClient {
     }
 
     private String getStationName(final String stationName) {
-        if (!stationName.equals("서울역") && stationName.endsWith("역")) {
+        if (!"서울역".equals(stationName) && stationName.endsWith("역")) {
             return stationName.substring(0, stationName.length() - 1);
         }
         return stationName;

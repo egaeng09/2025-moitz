@@ -8,6 +8,7 @@ import com.f12.moitz.application.dto.RecommendationRequest;
 import com.f12.moitz.application.dto.RecommendationResponse;
 import com.f12.moitz.application.dto.RouteResponse;
 import com.f12.moitz.application.dto.StartingPlaceResponse;
+import com.f12.moitz.domain.RecommendCondition;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class MockingRecommendationController implements SwaggerMockingRecommenda
 
     private MockRecommendationResponse mock() {
         return new MockRecommendationResponse(
+                RecommendCondition.CHAT.getTitle(),
                 List.of(
                         new StartingPlaceResponse(1L, 1, 127.094741101863, 37.5351180385975, "강변역"),
                         new StartingPlaceResponse(2L, 2, 127.01063381083677, 37.571669405802616, "동대문역"),
