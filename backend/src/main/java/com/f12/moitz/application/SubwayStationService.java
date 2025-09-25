@@ -49,22 +49,17 @@ public class SubwayStationService {
 
     public Optional<SubwayStation> findByName(final String name) {
         if ("총신대입구역".equals(name) || "이수역".equals(name)) {
-            Optional<SubwayStation> subwayStationEntity = getSubwayStation("총신대입구(이수)역");
+            final Optional<SubwayStation> subwayStationEntity = getSubwayStation("총신대입구(이수)역");
             if (subwayStationEntity.isPresent()) {
                 return subwayStationEntity;
             }
         }
-        Optional<SubwayStation> subwayStation = getSubwayStation(name);
-        if (subwayStation.isPresent()) {
-            return subwayStation;
-        }
-        return Optional.empty();
+        return getSubwayStation(name);
     }
 
-    @Nullable
-    private Optional<SubwayStation> getSubwayStation(String stationName) {
-        Optional<SubwayStationEntity> subwayStationEntity = subwayStationRepository.findByName(stationName);
-        return subwayStationEntity.map(stationEntity -> Optional.ofNullable(stationEntity.toDomain())).orElse(null);
+    private Optional<SubwayStation> getSubwayStation(final String stationName) {
+        return subwayStationRepository.findByName(stationName)
+                .map(SubwayStationEntity::toDomain);
     }
 
     public long getCount() {
@@ -72,44 +67,40 @@ public class SubwayStationService {
     }
 
     public void saveAll(final List<SubwayStation> subwayStations) {
-        List<SubwayStationEntity> subwayStationEntities = subwayStations.stream()
+        final List<SubwayStationEntity> subwayStationEntities = subwayStations.stream()
                 .map(SubwayStationEntity::toFromSubwayStation)
                 .toList();
         subwayStationRepository.saveAll(subwayStationEntities);
     }
 
-    public List<SubwayStation> generateCandidatePlace(List<SubwayStation> startingStations) {
-
-        List<SubwayStationEntity> stationEntities = startingStations.stream()
+    public List<SubwayStation> generateCandidatePlace(final List<SubwayStation> startingStations) {
+        final List<SubwayStationEntity> stationEntities = startingStations.stream()
                 .map(SubwayStationEntity::toFromSubwayStation)
                 .toList();
 
-        Coordinate[] coordinateArr = getCoordinates(stationEntities);
+        final Coordinate[] coordinateArr = getCoordinates(stationEntities);
 
-        org.springframework.data.geo.Point center = getCenterPoint(coordinateArr);
-        Distance distance;
-            distance = new Distance(DISTANCE_VALUE, Metrics.KILOMETERS);
+        final org.springframework.data.geo.Point center = getCenterPoint(coordinateArr);
+        final Distance distance = new Distance(DISTANCE_VALUE, Metrics.KILOMETERS);
 
         return subwayStationRepository.findByPointNear(center, distance).stream()
                 .map(SubwayStationEntity::toDomain)
                 .toList();
     }
 
-    private Coordinate[] getCoordinates(List<SubwayStationEntity> stationEntities) {
+    private Coordinate[] getCoordinates(final List<SubwayStationEntity> stationEntities) {
         return stationEntities.stream()
                 .map(place -> {
-                    List<Double> coordinates = place.getPoint().getCoordinates();
+                    final List<Double> coordinates = place.getPoint().getCoordinates();
                     return new Coordinate(coordinates.get(0), coordinates.get(1));
                 })
                 .toArray(Coordinate[]::new);
     }
 
-    private org.springframework.data.geo.Point getCenterPoint(Coordinate[] coordinateArr) {
-
-        MultiPoint multiPoint = geometryFactory.createMultiPointFromCoords(coordinateArr);
-
-        Point centroid = multiPoint.getCentroid();
-
+    private org.springframework.data.geo.Point getCenterPoint(final Coordinate[] coordinateArr) {
+        final MultiPoint multiPoint = geometryFactory.createMultiPointFromCoords(coordinateArr);
+        final Point centroid = multiPoint.getCentroid();
         return new org.springframework.data.geo.Point(centroid.getX(), centroid.getY());
     }
+
 }
