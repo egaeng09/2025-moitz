@@ -39,11 +39,15 @@ public class GoogleGeminiClient {
     private final Client geminiClient;
     private final ObjectMapper objectMapper;
 
-    public RecommendedLocationsResponse generateResponse(List<String> startingPlaces, List<String> candidatePlace, String requirement) {
+    public RecommendedLocationsResponse generateResponse(
+            final List<String> startingPlaces,
+            final List<String> candidatePlaces,
+            final String requirement
+    ) {
         return readValue(
                 generateContent(
                         startingPlaces,
-                        candidatePlace,
+                        candidatePlaces,
                         requirement,
                         PromptGenerator.getSchema()
                 ).text(),
@@ -51,7 +55,12 @@ public class GoogleGeminiClient {
         );
     }
 
-    private GenerateContentResponse generateContent(List<String> startingStations, List<String> candidateStations, String requirement, Map<String, Object> inputData) {
+    private GenerateContentResponse generateContent(
+            final List<String> startingStations,
+            final List<String> candidateStations,
+            final String requirement,
+            final Map<String, Object> inputData
+    ) {
         final String prompt = String.format(
                 ADDITIONAL_WITH_CANDIDATE_PROMPT,
                 RECOMMENDATION_COUNT,
@@ -71,7 +80,7 @@ public class GoogleGeminiClient {
         return generateWith(prompt, config);
     }
 
-    public List<PlaceRecommendResponse> generateWith(String prompt) {
+    public List<PlaceRecommendResponse> generateWith(final String prompt) {
         final GenerateContentConfig config = GenerateContentConfig.builder()
                 .temperature(0.4F)
                 .responseMimeType("application/json")
