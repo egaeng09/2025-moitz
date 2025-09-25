@@ -109,7 +109,7 @@ public class RecommendationService {
                 placeRoutes
         );
         stopWatch.stop();
-        log.debug("추천 서비스 완료. {}", stopWatch.shortSummary());
+        log.debug("추천 서비스 완료. {}", stopWatch.prettyPrint());
 
         return recommendResultRepository.saveAndReturnId(
                 recommendationMapper.toResult(
@@ -123,7 +123,7 @@ public class RecommendationService {
     private List<SubwayStation> getByNames(final List<String> names) {
         return names.stream()
                 .map(name -> subwayStationService.findByName(name)
-                        .orElseThrow(() -> new BadRequestException(GeneralErrorCode.INPUT_INVALID_START_LOCATION)))
+                        .orElseThrow(() -> new BadRequestException(GeneralErrorCode.INPUT_INVALID_START_LOCATION, name)))
                 .toList();
     }
 
@@ -167,9 +167,17 @@ public class RecommendationService {
     }
 
     public RecommendationsResponse getById(final String id) {
-        final Result result = recommendResultRepository.findById(new ObjectId(id))
+        final Result result = recommendResultRepository.findById(parseObjectId(id))
                 .orElseThrow(() -> new NotFoundException(GeneralErrorCode.INPUT_INVALID_RESULT));
         return recommendationMapper.toResponse(result);
+    }
+
+    private ObjectId parseObjectId(final String id) {
+        try {
+            return new ObjectId(id);
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException(GeneralErrorCode.INPUT_INVALID_RESULT);
+        }
     }
 
 }
