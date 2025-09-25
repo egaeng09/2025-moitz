@@ -5,6 +5,9 @@ import java.util.List;
 
 public interface LocationRecommender {
 
-    RecommendedLocationsResponse recommendLocations(final List<String> startPlaceNames, final String condition);
-
+    RecommendedLocationsResponse recommendLocations(
+            List<String> startingPlaces,
+            List<String> candidatePlaces,
+            String requirement
+    );
 }

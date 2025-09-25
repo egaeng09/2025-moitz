@@ -34,10 +34,10 @@ dependencies {
 	implementation 'com.bucket4j:bucket4j-core:8.10.1'
 	implementation 'com.bucket4j:bucket4j-redis:8.10.1'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	implementation 'org.locationtech.jts:jts-core:1.19.0'
+    implementation 'org.locationtech.jts:jts-core:1.20.0'
 	implementation 'com.google.genai:google-genai:1.8.0'
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'

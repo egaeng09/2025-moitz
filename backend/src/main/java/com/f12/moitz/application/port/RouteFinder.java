@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface RouteFinder {
 
-    List<Route> findRoutes(final List<StartEndPair> placePairs);
+    List<Route> findRoutes(List<StartEndPair> placePairs);
 
 }

@@ -23,4 +23,5 @@ public class SubwayEdgeService {
     public SubwayEdges getSubwayEdges() {
         return new SubwayEdges(new HashSet<>(subwayEdgeRepository.findAll()));
     }
+
 }

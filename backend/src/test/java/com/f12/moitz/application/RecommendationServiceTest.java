@@ -86,7 +86,7 @@ class RecommendationServiceTest {
         final RecommendedLocationsResponse mockLocationsResponse = new RecommendedLocationsResponse(List.of(
                 new RecommendedLocationResponse("선릉역", "이유1", "설명1"),
                 new RecommendedLocationResponse("삼성역", "이유2", "설명2")));
-        given(locationRecommender.recommendLocations(anyList(), anyString())).willReturn(mockLocationsResponse);
+        given(locationRecommender.recommendLocations(anyList(), anyList(), anyString())).willReturn(mockLocationsResponse);
 
         final SubwayStation seolleung = new SubwayStation("선릉역", new Point(127.048, 37.504));
         final SubwayStation samsung = new SubwayStation("삼성역", new Point(127.063, 37.508));

@@ -26,5 +26,5 @@ public class Point {
             throw new IllegalArgumentException("Y(위도)는 대한민국 영역 내에 있어야 합니다. 범위: 33 ~ 43, 현재 값: " + y);
         }
     }
-
+    
 }

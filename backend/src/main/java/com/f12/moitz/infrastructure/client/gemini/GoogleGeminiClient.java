@@ -1,6 +1,6 @@
 package com.f12.moitz.infrastructure.client.gemini;
 
-import static com.f12.moitz.infrastructure.PromptGenerator.ADDITIONAL_PROMPT;
+import static com.f12.moitz.infrastructure.PromptGenerator.ADDITIONAL_WITH_CANDIDATE_PROMPT;
 import static com.f12.moitz.infrastructure.PromptGenerator.RECOMMENDATION_COUNT;
 
 import com.f12.moitz.application.dto.PlaceRecommendResponse;
@@ -40,22 +40,35 @@ public class GoogleGeminiClient {
     private final ObjectMapper objectMapper;
 
     public RecommendedLocationsResponse generateResponse(
-            final List<String> stationNames,
+            final List<String> startingPlaces,
+            final List<String> candidatePlaces,
             final String requirement
     ) {
         return readValue(
-                generateContent(stationNames, requirement, PromptGenerator.getSchema()).text(),
+                generateContent(
+                        startingPlaces,
+                        candidatePlaces,
+                        requirement,
+                        PromptGenerator.getSchema()
+                ).text(),
                 RecommendedLocationsResponse.class
         );
     }
 
     private GenerateContentResponse generateContent(
-            final List<String> stationNames,
+            final List<String> startingStations,
+            final List<String> candidateStations,
             final String requirement,
             final Map<String, Object> inputData
     ) {
-        final String stations = String.join(", ", stationNames);
-        final String prompt = String.format(ADDITIONAL_PROMPT, RECOMMENDATION_COUNT, stations, requirement, RECOMMENDATION_COUNT);
+        final String prompt = String.format(
+                ADDITIONAL_WITH_CANDIDATE_PROMPT,
+                RECOMMENDATION_COUNT,
+                startingStations,
+                candidateStations,
+                requirement,
+                RECOMMENDATION_COUNT
+        );
 
         final GenerateContentConfig config = GenerateContentConfig.builder()
                 .temperature(0.4F)
@@ -67,7 +80,7 @@ public class GoogleGeminiClient {
         return generateWith(prompt, config);
     }
 
-    public List<PlaceRecommendResponse> generateWith(String prompt) {
+    public List<PlaceRecommendResponse> generateWith(final String prompt) {
         final GenerateContentConfig config = GenerateContentConfig.builder()
                 .temperature(0.4F)
                 .responseMimeType("application/json")
