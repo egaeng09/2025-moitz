@@ -81,7 +81,7 @@ public class RouteFinderAdapter implements RouteFinder {
                 );
                 final Place endPlace = new Place(
                         subPath.endName(),
-                        new Point((subPath.endX()), subPath.endY())
+                        new Point(subPath.endX(), subPath.endY())
                 );
                 resultingPaths.add(new Path(
                         startPlace,
