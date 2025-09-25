@@ -53,10 +53,7 @@ export function useFormInfo(): UseFormInfoReturn {
     if (!lengthValidation.isValid) {
       return lengthValidation;
     }
-
-    const matchedStation = stationNameValidation.matchedStation!;
-    if (!matchedStation) return;
-    setDepartureList((prev) => [...prev, matchedStation]);
+    setDepartureList((prev) => [...prev, stationNameValidation.matchedStation]);
     return { isValid: true, message: '' };
   };
 
