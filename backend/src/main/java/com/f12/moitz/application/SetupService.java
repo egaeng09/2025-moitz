@@ -35,6 +35,7 @@ public class SetupService {
     private final PlaceFinder placeFinder;
 
     public void setup() {
+        log.info("SubwayEdges 초기화 시작");
 
         // 지하철 노선도 데이터 존재하는지 확인
         if (subwayStationService.getCount() > 0 && subwayEdgeService.getCount() > 0) {
