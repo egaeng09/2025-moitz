@@ -51,6 +51,7 @@ class GoogleGeminiClientTest {
     void generateResponseSuccessTest() throws JsonProcessingException {
         // Given
         List<String> stationNames = List.of("강남역", "홍대입구역");
+        List<String> candidateNames = List.of("이태원역", "신사역", "동작역", "신용산역","영등포구청역");
         String requirement = "맛집이 많은 곳";
 
         String expectedJsonResponse = """
@@ -86,7 +87,7 @@ class GoogleGeminiClientTest {
                 .thenReturn(expectedResponse);
 
         // When
-        RecommendedLocationsResponse result = googleGeminiClient.generateResponse(stationNames, requirement);
+        RecommendedLocationsResponse result = googleGeminiClient.generateResponse(stationNames, candidateNames, requirement);
 
         // Then
         SoftAssertions.assertSoftly(softAssertions -> {
