@@ -125,8 +125,8 @@ public class RecommendationService {
         ).toHexString().toUpperCase();
     }
 
-    private List<String> getPlaceNames(final List<SubwayStation> stations) {
-        return stations.stream()
+    private List<String> getPlaceNames(final List<? extends Place> places) {
+        return places.stream()
                 .map(Place::getName)
                 .toList();
     }
