@@ -29,7 +29,7 @@ export default merge(common(envVars), {
     hot: true,
   },
   output: {
-    filename: '[name].[contenthash].js',
+    filename: '[name].js',
     assetModuleFilename: 'assets/[hash][ext][query]',
     clean: true,
   },
