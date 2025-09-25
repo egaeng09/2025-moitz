@@ -12,11 +12,7 @@ interface FallBackPageProps {
   text?: string;
 }
 
-function FallBackPage({
-  reset = () => window.location.reload(),
-  error,
-  text,
-}: FallBackPageProps) {
+function FallBackPage({ reset, error, text }: FallBackPageProps) {
   return (
     <Layout>
       <div
