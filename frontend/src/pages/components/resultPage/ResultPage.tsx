@@ -52,7 +52,7 @@ function ResultPage() {
   if (!location || location.recommendedLocations.length === 0)
     return (
       <FallBackPage
-        reset={() => window.location.reload()}
+        reset={() => navigate('/')}
         error={new Error('추천 결과가 없습니다.')}
         text="홈으로 돌아가기"
       />
