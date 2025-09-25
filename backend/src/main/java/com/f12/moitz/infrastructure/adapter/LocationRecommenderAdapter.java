@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class LocationRecommenderAdapter implements LocationRecommender {
-
     private final GoogleGeminiClient geminiClient;
+
     private final PerplexityClient perplexityClient;
 
     @Retryable(
@@ -25,13 +25,12 @@ public class LocationRecommenderAdapter implements LocationRecommender {
             maxAttempts = 2,
             recover = "recoverRecommendedLocations"
     )
-
     @Override
     public RecommendedLocationsResponse recommendLocations(
-            List<String> startingPlaces,
-            List<String> candidatePlaces,
-            String requirement)
-    {
+            final List<String> startingPlaces,
+            final List<String> candidatePlaces,
+            final String requirement
+    ) {
         final RecommendedLocationsResponse generatedResponse = geminiClient.generateResponse(
                 startingPlaces,
                 candidatePlaces,
@@ -81,4 +80,5 @@ public class LocationRecommenderAdapter implements LocationRecommender {
                 .toList()
         );
     }
+
 }
