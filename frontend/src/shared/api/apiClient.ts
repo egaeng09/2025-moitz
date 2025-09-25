@@ -12,7 +12,7 @@ export type RequestConfig = {
 class ApiError extends Error {
   constructor(
     public status: number,
-    message?: string,
+    message?: string
   ) {
     super(message);
     this.name = 'ApiError';
@@ -23,24 +23,24 @@ export const createApiRequest = async <T>({
   endpoint,
   method = 'GET',
   body,
-  headers: customHeaders = {},
+  headers: customHeaders = {}
 }: RequestConfig): Promise<T> => {
   const url = `${BASE_URL}${endpoint}`;
 
   const headers = {
     'Content-Type': 'application/json',
-    ...customHeaders,
+    ...customHeaders
   };
 
   try {
     const response = await fetch(url, {
       method,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : undefined
     });
 
     if (!response.ok) {
-      let errorMessage = `API 요청 실패: ${response.status} ${response.statusText}`;
+      let errorMessage = '';
 
       try {
         const errorData = await response.json();
@@ -48,7 +48,7 @@ export const createApiRequest = async <T>({
           errorMessage = errorData.message;
         }
       } catch {
-        // JSON 파싱 실패 시 기본 메시지 사용
+        errorMessage = `API 요청 실패: ${response.status} ${response.statusText}`;
       }
 
       throw new ApiError(response.status, errorMessage);
@@ -65,25 +65,15 @@ export const createApiRequest = async <T>({
 };
 
 export const apiClient = {
-  get: <T>(
-    endpoint: string,
-    config?: Omit<RequestConfig, 'method' | 'endpoint'>,
-  ) => createApiRequest<T>({ ...config, endpoint, method: 'GET' }),
+  get: <T>(endpoint: string, config?: Omit<RequestConfig, 'method' | 'endpoint'>) =>
+    createApiRequest<T>({ ...config, endpoint, method: 'GET' }),
 
-  post: <T>(
-    endpoint: string,
-    body?: unknown,
-    config?: Omit<RequestConfig, 'method' | 'endpoint' | 'body'>,
-  ) => createApiRequest<T>({ ...config, endpoint, method: 'POST', body }),
+  post: <T>(endpoint: string, body?: unknown, config?: Omit<RequestConfig, 'method' | 'endpoint' | 'body'>) =>
+    createApiRequest<T>({ ...config, endpoint, method: 'POST', body }),
 
-  put: <T>(
-    endpoint: string,
-    body?: unknown,
-    config?: Omit<RequestConfig, 'method' | 'endpoint' | 'body'>,
-  ) => createApiRequest<T>({ ...config, endpoint, method: 'PUT', body }),
+  put: <T>(endpoint: string, body?: unknown, config?: Omit<RequestConfig, 'method' | 'endpoint' | 'body'>) =>
+    createApiRequest<T>({ ...config, endpoint, method: 'PUT', body }),
 
-  delete: <T>(
-    endpoint: string,
-    config?: Omit<RequestConfig, 'method' | 'endpoint'>,
-  ) => createApiRequest<T>({ ...config, endpoint, method: 'DELETE' }),
+  delete: <T>(endpoint: string, config?: Omit<RequestConfig, 'method' | 'endpoint'>) =>
+    createApiRequest<T>({ ...config, endpoint, method: 'DELETE' })
 };
