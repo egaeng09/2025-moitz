@@ -44,6 +44,7 @@ dependencies {
 	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 	implementation 'io.micrometer:micrometer-registry-cloudwatch2'
 
+	implementation 'io.github.resilience4j:resilience4j-micrometer'
 	implementation 'io.github.resilience4j:resilience4j-all:2.2.0'
 	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
 
