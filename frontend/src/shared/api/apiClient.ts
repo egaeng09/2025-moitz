@@ -40,10 +40,18 @@ export const createApiRequest = async <T>({
     });
 
     if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        `API 요청 실패: ${response.status} ${response.statusText}`,
-      );
+      let errorMessage = `API 요청 실패: ${response.status} ${response.statusText}`;
+
+      try {
+        const errorData = await response.json();
+        if (errorData?.message && typeof errorData.message === 'string') {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // JSON 파싱 실패 무시
+      }
+
+      throw new ApiError(response.status, errorMessage);
     }
 
     const data = await response.json();
@@ -52,7 +60,10 @@ export const createApiRequest = async <T>({
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(error.status, error.message);
+
+    const errorMessage =
+      error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다';
+    throw new ApiError(500, errorMessage);
   }
 };
 
