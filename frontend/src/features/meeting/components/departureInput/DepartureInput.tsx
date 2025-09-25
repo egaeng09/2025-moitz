@@ -1,3 +1,4 @@
+import { f } from '@mswjs/interceptors/lib/node/Interceptor-bc5a9d8e';
 import React, { useState } from 'react';
 
 import InputFormSection from '@features/meeting/components/meetingFormSection/MeetingFormSection';
@@ -47,6 +48,12 @@ function DepartureInput({
       e.preventDefault();
       if (e.nativeEvent.isComposing) return;
 
+      if (filteredStations.length === 1) {
+        handleStationSelect(filteredStations[0]);
+        return;
+      }
+
+      console.log(inputValue);
       const trimmedValue = inputValue.trim();
       if (trimmedValue) {
         handleStationSelect(trimmedValue);

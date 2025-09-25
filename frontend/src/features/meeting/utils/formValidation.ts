@@ -29,18 +29,26 @@ export const validateDepartureListMaxLength = (
 };
 
 export const validateStationName = (name: string): ValidationError => {
-  if (name.trim() === '') {
-    return {
-      isValid: false,
-      message: '출발지를 입력해주세요',
-    };
-  }
-  if (!STATION_LIST.includes(name as (typeof STATION_LIST)[number])) {
+  const stationName = name.trim();
+
+  const matched = STATION_LIST.filter((station) =>
+    station.includes(stationName),
+  );
+
+  if (matched.length === 0) {
     return {
       isValid: false,
       message: '서울 내의 올바른 지하철 역이름을 입력해주세요',
     };
   }
+
+  if (matched.length > 1) {
+    return {
+      isValid: false,
+      message: '여러 출발지가 검색되었어요. 다시 입력해주세요',
+    };
+  }
+
   return { isValid: true, message: '' };
 };
 
