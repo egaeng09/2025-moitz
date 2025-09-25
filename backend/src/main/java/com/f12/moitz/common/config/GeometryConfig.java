@@ -11,4 +11,5 @@ public class GeometryConfig {
     public GeometryFactory geometryFactory() {
         return new GeometryFactory();
     }
+
 }
