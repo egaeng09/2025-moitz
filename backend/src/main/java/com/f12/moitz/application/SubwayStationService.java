@@ -49,10 +49,8 @@ public class SubwayStationService {
 
     public Optional<SubwayStation> findByName(final String name) {
         if ("총신대입구역".equals(name) || "이수역".equals(name)) {
-            final Optional<SubwayStation> subwayStationEntity = getSubwayStation("총신대입구(이수)역");
-            if (subwayStationEntity.isPresent()) {
-                return subwayStationEntity;
-            }
+            return getSubwayStation("총신대입구(이수)역")
+                    .or(() -> getSubwayStation(name));
         }
         return getSubwayStation(name);
     }
