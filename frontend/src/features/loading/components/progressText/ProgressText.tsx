@@ -20,7 +20,7 @@ function ProgressText({ text }: ProgressTextProps) {
   }, []);
 
   return (
-    <div
+    <span
       css={[
         flex({ align: 'center', justify: 'center' }),
         typography.b2,
@@ -28,7 +28,7 @@ function ProgressText({ text }: ProgressTextProps) {
       ]}
     >
       {text[textIndex]}
-    </div>
+    </span>
   );
 }
 
