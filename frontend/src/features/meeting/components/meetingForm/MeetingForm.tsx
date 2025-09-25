@@ -8,13 +8,13 @@ import { useToast } from '@features/toast/hooks/useToast';
 import { useLocationsContext } from '@entities/location/contexts/useLocationsContext';
 import { setMeetingStorage } from '@entities/location/model/meetingStorage';
 
-import BottomButton from '@shared/components/bottomButton/BottomButton';
 import { flex } from '@shared/styles/default.styled';
 
 import { ValidationError } from '@shared/types/validationError';
 
 import ConditionSelector from '../conditionSelector/ConditionSelector';
 import DepartureInput from '../departureInput/DepartureInput';
+import MeetingFormBottomButton from '../meetingFormButton/meetingFormButton';
 
 function MeetingForm() {
   let navigate = useNavigate();
@@ -29,7 +29,12 @@ function MeetingForm() {
   } = useFormInfo();
   const { isVisible, message, showToast } = useToast();
 
-  const { getRecommendationId } = useLocationsContext();
+  const { getRecommendationFull } = useLocationsContext();
+
+  const isValid = React.useMemo(
+    () => validateFormSubmit().isValid,
+    [departureList, conditionID],
+  );
 
   const showValidationError = (error: ValidationError) => {
     if (!error.isValid) {
@@ -45,11 +50,6 @@ function MeetingForm() {
     }
   };
 
-  const validateActive = () => {
-    const formValidation = validateFormSubmit();
-    return formValidation.isValid;
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -60,7 +60,7 @@ function MeetingForm() {
     }
 
     try {
-      const id = await getRecommendationId({
+      const { id } = await getRecommendationFull({
         startingPlaceNames: departureList,
         requirement: conditionID,
       });
@@ -88,11 +88,7 @@ function MeetingForm() {
         />
       </div>
 
-      <BottomButton
-        type="submit"
-        text="모임 지역 찾기"
-        active={validateActive()}
-      />
+      <MeetingFormBottomButton active={isValid} />
       <Toast message={message} isVisible={isVisible} />
     </form>
   );

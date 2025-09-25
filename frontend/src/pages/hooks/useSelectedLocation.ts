@@ -14,7 +14,12 @@ const useSelectedLocation = (): useSelectedLocationReturn => {
     useState<SelectedLocation>(null);
 
   const changeSelectedLocation = (location: SelectedLocation) => {
-    setSelectedLocation(location);
+    setSelectedLocation((prevLocation) => {
+      if (prevLocation === location) {
+        return null;
+      }
+      return location;
+    });
   };
 
   return { selectedLocation, changeSelectedLocation };

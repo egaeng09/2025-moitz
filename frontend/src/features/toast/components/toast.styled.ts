@@ -1,6 +1,6 @@
 import { css, keyframes } from '@emotion/react';
 
-import { borderRadiusToken, colorToken } from '@shared/styles/tokens';
+import { borderRadiusToken, colorToken, layout } from '@shared/styles/tokens';
 
 const slideDown = () => keyframes`
   0% {
@@ -22,7 +22,8 @@ const slideDown = () => keyframes`
 `;
 
 export const container = () => css`
-  width: fit-content;
+  width: max-content;
+  max-width: calc(${layout.minWidth} - 40px);
   position: fixed;
   top: 20px;
   left: 50%;
@@ -31,7 +32,7 @@ export const container = () => css`
 `;
 
 export const content = () => css`
-  min-width: calc(100%);
+  min-width: 100%;
   padding: 10px 12px;
   text-align: center;
   background-color: ${colorToken.gray[7]};
@@ -40,5 +41,8 @@ export const content = () => css`
 `;
 
 export const text = () => css`
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   color: ${colorToken.gray[3]};
 `;

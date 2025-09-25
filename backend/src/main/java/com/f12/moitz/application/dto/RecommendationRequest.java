@@ -19,7 +19,7 @@ public record RecommendationRequest(
 
         private void validate(final List<String> startingPlaceNames) {
                 if (startingPlaceNames == null || startingPlaceNames.isEmpty()) {
-                        throw new BadRequestException(GeneralErrorCode.INPUT_INVALID_START_LOCATION);
+                        throw new BadRequestException(GeneralErrorCode.INPUT_INVALID_START_LOCATION, startingPlaceNames);
                 }
         }
 

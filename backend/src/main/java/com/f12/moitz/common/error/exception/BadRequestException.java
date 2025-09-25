@@ -1,5 +1,6 @@
 package com.f12.moitz.common.error.exception;
 
+import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
@@ -13,7 +14,7 @@ public class BadRequestException extends RuntimeException {
     }
 
     public BadRequestException(ErrorCode errorCode, Object... args) {
-        super(String.format(errorCode.getMessage(), args));
+        super(errorCode.getMessage() + " " + Arrays.toString(args));
         this.errorCode = errorCode;
     }
 
