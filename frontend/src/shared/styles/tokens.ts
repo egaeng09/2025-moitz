@@ -92,6 +92,7 @@ const borderRadiusToken = {
 
 const layout = {
   maxWidth: 'var(--layout-max-width)',
+  minWidth: 'var(--layout-min-width)',
   media_maxWidth: '400px',
 };
 

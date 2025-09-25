@@ -23,7 +23,7 @@ function Toast({ message, isVisible }: ToastProps) {
         ]}
       >
         <img src={IconToast} alt="icon-toast" />
-        <div css={[toast.text(), typography.b1]}>{message}</div>
+        <span css={[toast.text(), typography.b1]}>{message}</span>
       </div>
     </div>,
     document.body,
