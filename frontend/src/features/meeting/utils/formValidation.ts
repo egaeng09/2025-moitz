@@ -56,7 +56,7 @@ export const validateStationName = (name: string): ValidationError => {
   }
 
   return {
-    isValid: false,
+    isValid: true,
     message: '여러 개의 역이 검색되었습니다. 더 정확히 입력해주세요',
   };
 };
