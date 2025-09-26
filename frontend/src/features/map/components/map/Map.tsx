@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useCustomOverlays } from '@features/map/hooks/useCustomOverlays';
 import { SelectedLocation } from '@features/recommendation/types/SelectedLocation';
 
@@ -7,6 +9,7 @@ import {
 } from '@entities/location/types/Location';
 
 import * as map from './map.styled';
+
 interface MapProps {
   startingLocations: StartingPlace[];
   recommendedLocations: RecommendedLocation[];
@@ -20,12 +23,28 @@ function Map({
   selectedLocation,
   changeSelectedLocation,
 }: MapProps) {
-  const mapRef = useCustomOverlays({
-    startingLocations,
-    recommendedLocations,
-    selectedLocation,
-    changeSelectedLocation,
-  });
+  const emptyProps = useMemo(
+    () => ({
+      startingLocations: [],
+      recommendedLocations: [],
+      selectedLocation: null,
+      changeSelectedLocation: () => {},
+    }),
+    [],
+  );
+
+  // 스크립트가 로드된 후에만 지도 훅 사용
+  const mapRef = useCustomOverlays(
+    isScriptLoaded
+      ? {
+          startingLocations,
+          recommendedLocations,
+          selectedLocation,
+          changeSelectedLocation,
+        }
+      : emptyProps,
+  );
+
 
   return <div ref={mapRef} css={map.container()} />;
 }

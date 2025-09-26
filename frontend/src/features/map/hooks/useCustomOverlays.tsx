@@ -1,6 +1,11 @@
 /* eslint-disable no-undef */
 import { useEffect, useRef } from 'react';
 
+import {
+  createCustomOverlay,
+  type CustomOverlayInstance,
+} from '@features/map/lib/createCustomOverlay';
+
 import type {
   RecommendedLocation,
   StartingPlace,
@@ -9,7 +14,6 @@ import type {
 import MarkerIndex from '@shared/components/markerIndex/MarkerIndex';
 import { numberToCharCode } from '@shared/utils/numberToCharCode';
 
-import CustomOverlay from '../lib/CustomOverlay';
 import { getCenterFromCoords } from '../lib/getCenterFromCoords';
 
 interface UseCustomOverlaysProps {
@@ -33,7 +37,7 @@ export const useCustomOverlays = ({
   const mapRef = useRef<HTMLDivElement | null>(null);
   const naverMapRef = useRef<naver.maps.Map | null>(null);
 
-  const overlayInstancesRef = useRef<CustomOverlay[]>([]);
+  const overlayInstancesRef = useRef<CustomOverlayInstance[]>([]);
   const polylineInstancesRef = useRef<naver.maps.Polyline[]>([]); // 폴리라인 보관
 
   /* ===========================================
@@ -68,7 +72,7 @@ export const useCustomOverlays = ({
 
     // 1) 출발지 마커 (항상 표시)
     startingLocations.forEach((loc, i) => {
-      const overlay = new CustomOverlay({
+      const overlay = createCustomOverlay({
         naverMap: naverMapRef.current!,
         position: new naver.maps.LatLng(loc.y, loc.x),
         zIndex: 300,
@@ -93,7 +97,7 @@ export const useCustomOverlays = ({
     recommendedLocations.forEach((loc, i) => {
       if (selectedLocation && loc.id !== selectedLocation.id) return;
 
-      const overlay = new CustomOverlay({
+      const overlay = createCustomOverlay({
         naverMap: naverMapRef.current!,
         position: new naver.maps.LatLng(loc.y, loc.x),
         zIndex: 200,
