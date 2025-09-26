@@ -1,4 +1,6 @@
-const BASE_URL = process.env.API_BASE_URL;
+import { getApiBaseUrl } from '@shared/config/env';
+
+const BASE_URL = getApiBaseUrl();
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
