@@ -58,6 +58,7 @@ public class RecommendationMapper {
                 generatedPlaces.entrySet().stream()
                         // TODO: 카테고리 키워드 재정의 혹은 네이버 장소 추천 도입 고려
                         .filter(entry -> placeListMap.get(entry.getKey()) != null)
+                        .filter(entry -> !placeListMap.get(entry.getKey()).isEmpty())
                         .map(place -> new Candidate(
                                 place.getKey(),
                                 placeRoutes.get(place.getKey()),
