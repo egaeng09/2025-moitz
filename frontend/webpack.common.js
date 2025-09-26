@@ -55,7 +55,7 @@ export default function common(envVars = {}) {
       new HtmlWebpackPlugin({
         template: 'index.html',
         templateParameters: envVars,
-        favicon: './assets/icon/logo-icon.svg',
+        favicon: path.resolve(__dirname, './assets/icon/logo-icon.svg'),
       }),
     ],
   };
