@@ -1,4 +1,3 @@
-import { config } from '@config/env';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
@@ -6,6 +5,11 @@ import { LocationsRequestBodyMock } from '@mocks/LocationsRequestBodyMock';
 import { server } from '@mocks/server';
 
 import useLocations from './useLocations';
+
+const BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? process.env.PROD_API_BASE_URL
+    : process.env.DEV_API_BASE_URL;
 
 describe('useLocations', () => {
   describe('getRecommendationId', () => {
@@ -28,7 +32,7 @@ describe('useLocations', () => {
     it('ID 요청이 실패하면 error 상태가 true가 된다', async () => {
       // given: 서버가 500 에러를 응답하도록 설정
       server.use(
-        http.post(`${config.api.baseUrl}/recommendations`, () =>
+        http.post(`${BASE_URL}/recommendations`, () =>
           HttpResponse.json(
             { message: 'Internal Server Error' },
             { status: 500 },
@@ -81,7 +85,7 @@ describe('useLocations', () => {
     it('결과 요청이 실패하면 error 상태가 true가 된다', async () => {
       // given: 서버가 500 에러를 응답하도록 설정
       server.use(
-        http.get(`${config.api.baseUrl}/recommendations/JF768D13`, () =>
+        http.get(`${BASE_URL}/recommendations/JF768D13`, () =>
           HttpResponse.json(
             { message: 'Internal Server Error' },
             { status: 500 },
