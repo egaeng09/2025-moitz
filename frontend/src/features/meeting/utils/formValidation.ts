@@ -42,13 +42,6 @@ export const validateStationName = (name: string): ValidationError => {
     };
   }
 
-  if (matched.length > 1) {
-    return {
-      isValid: false,
-      message: '여러 출발지가 검색되었어요. 다시 입력해주세요',
-    };
-  }
-
   return { isValid: true, message: '' };
 };
 
