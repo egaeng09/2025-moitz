@@ -7,8 +7,9 @@ import com.f12.moitz.domain.Place;
 import com.f12.moitz.domain.Point;
 import com.f12.moitz.domain.Route;
 import com.f12.moitz.domain.TravelMethod;
+import com.f12.moitz.domain.subway.SubwayLine;
 import com.f12.moitz.infrastructure.client.odsay.OdsayMultiClient;
-import com.f12.moitz.infrastructure.client.odsay.SubwayCode;
+import com.f12.moitz.infrastructure.client.odsay.OdsaySubwayCode;
 import com.f12.moitz.infrastructure.client.odsay.dto.SubPathResponse;
 import com.f12.moitz.infrastructure.client.odsay.dto.SubwayRouteSearchResponse;
 import java.time.Duration;
@@ -97,7 +98,7 @@ public class RouteFinderAsyncAdapter implements AsyncRouteFinder {
                         endPlace,
                         TravelMethod.from(subPath.trafficType()),
                         subPath.sectionTime(),
-                        SubwayCode.fromCode(subPath.lane().getFirst().subwayCode()).getTitle()
+                        SubwayLine.valueOf(OdsaySubwayCode.fromCode(subPath.lane().getFirst().subwayCode()).getTitle())
                 ));
 
                 lastValidStationName = subPath.endName();

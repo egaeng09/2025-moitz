@@ -1,3 +1,5 @@
+import { LocationRequirement } from '@entities/location/types/LocationRequirement';
+
 export type StartingPlaceResponse = {
   id: number;
   index: number;
@@ -48,6 +50,7 @@ export type RecommendedLocationResponse = {
 };
 
 export type LocationResponse = {
+  requirement: LocationRequirement;
   startingPlaces: StartingPlaceResponse[];
   locations: RecommendedLocationResponse[];
 };

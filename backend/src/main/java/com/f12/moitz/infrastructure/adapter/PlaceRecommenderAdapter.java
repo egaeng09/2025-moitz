@@ -1,5 +1,6 @@
 package com.f12.moitz.infrastructure.adapter;
 
+import com.f12.moitz.domain.Point;
 import com.f12.moitz.application.port.PlaceRecommender;
 import com.f12.moitz.domain.Place;
 import com.f12.moitz.domain.RecommendedPlace;
@@ -32,6 +33,7 @@ public class PlaceRecommenderAdapter implements PlaceRecommender {
                                 .flatMap(response -> response.documents().stream())
                                 .map(document -> new RecommendedPlace(
                                         document.placeName(),
+                                        new Point(Double.parseDouble(document.x()), Double.parseDouble(document.y())),
                                         parseCategoryName(document.categoryName()),
                                         calculateWalkingTime(Integer.parseInt(document.distance())),
                                         document.placeUrl()

@@ -1,54 +1,63 @@
 package com.f12.moitz.domain.subway;
 
-import lombok.Getter;
-
 import java.time.Duration;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Edge {
 
-    private String destination;
-
+    private SubwayStation destination;
     private Duration travelTime;
-
     private int distance;
+    private SubwayLine subwayLine;
 
-    private String lineName;
-
-    protected Edge() {}
-
-    public Edge(final String destination, final int timeInSeconds, final int distance, final String lineName) {
+    public Edge(
+            final SubwayStation destination,
+            final int timeInSeconds,
+            final int distance,
+            final String subwayLine
+    ) {
+        validate(destination, timeInSeconds, distance);
         this.destination = destination;
         this.travelTime = Duration.ofSeconds(timeInSeconds);
         this.distance = distance;
-        this.lineName = lineName;
+        this.subwayLine = subwayLine != null ? SubwayLine.fromTitle(subwayLine) : null;
     }
 
-    public Edge(
-            String destination,
-            Duration duration,
-            int distance,
-            String lineName
+    private void validate(
+            final SubwayStation destination,
+            final int timeInSeconds,
+            final int distance
     ) {
-        this.destination = destination;
-        this.travelTime = duration;
-        this.distance = distance;
-        this.lineName = lineName;
+        if (destination == null) {
+            throw new IllegalArgumentException("목적지는 비어있을 수 없습니다.");
+        }
+        if (timeInSeconds < 0) {
+            throw new IllegalStateException("이동 시간은 음수일 수 없습니다.");
+        }
+        if (distance < 0) {
+            throw new IllegalStateException("이동 거리는 음수일 수 없습니다.");
+        }
+
     }
 
-    public boolean isEqualTo(Edge edge) {
-        return this.destination.equals(edge.destination) && this.lineName.equals(edge.lineName);
-    }
-
-    public boolean isSameLine(String lineName) {
-        return this.lineName.equals(lineName);
-    }
-
-    public boolean isTowards(String destination) {
-        return this.destination.equals(destination);
+    public boolean isEqualTo(final Edge edge) {
+        return this.destination.getName().equals(edge.getDestination().getName())
+                && this.subwayLine.equals(edge.getSubwayLine());
     }
 
     public int getTimeInSeconds() {
         return (int) travelTime.getSeconds();
+    }
+
+    public boolean isSameLine(final SubwayLine subwayLine) {
+        return this.subwayLine == subwayLine;
+    }
+
+    public boolean isTowards(final SubwayStation destination) {
+        return this.destination.equals(destination);
     }
 }

@@ -47,6 +47,11 @@ function DepartureInput({
       e.preventDefault();
       if (e.nativeEvent.isComposing) return;
 
+      if (filteredStations.length === 1) {
+        handleStationSelect(filteredStations[0]);
+        return;
+      }
+
       const trimmedValue = inputValue.trim();
       if (trimmedValue) {
         handleStationSelect(trimmedValue);

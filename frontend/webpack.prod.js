@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpack from 'webpack';
+// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 
 import common from './webpack.common.js';
@@ -26,6 +27,7 @@ export default merge(common(envVars), {
   output: {
     filename: '[name].[contenthash].js',
     assetModuleFilename: 'assets/[hash][ext][query]',
+    publicPath: '/',
     clean: true,
   },
   module: {
@@ -34,6 +36,13 @@ export default merge(common(envVars), {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/[name].[contenthash][ext]',
+        },
+      },
     ],
   },
   plugins: [
@@ -41,6 +50,7 @@ export default merge(common(envVars), {
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
     }),
+    // new BundleAnalyzerPlugin(),
   ],
   optimization: {
     minimize: true,
@@ -56,5 +66,8 @@ export default merge(common(envVars), {
     ],
     splitChunks: { chunks: 'all' },
     runtimeChunk: 'single',
+  },
+  performance: {
+    hints: false,
   },
 });

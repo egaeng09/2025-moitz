@@ -50,10 +50,11 @@ class GoogleGeminiClientTest {
     @Test
     void generateResponseSuccessTest() throws JsonProcessingException {
         // Given
-        List<String> stationNames = List.of("강남역", "홍대입구역");
-        String requirement = "맛집이 많은 곳";
+        final List<String> stationNames = List.of("강남역", "홍대입구역");
+        final List<String> candidateNames = List.of("이태원역", "신사역", "동작역", "신용산역", "영등포구청역");
+        final String requirement = "맛집이 많은 곳";
 
-        String expectedJsonResponse = """
+        final String expectedJsonResponse = """
                 {
                     "recommendations": [
                         {
@@ -68,14 +69,14 @@ class GoogleGeminiClientTest {
                 }
                 """;
 
-        RecommendedLocationsResponse expectedResponse = new RecommendedLocationsResponse(
+        final RecommendedLocationsResponse expectedResponse = new RecommendedLocationsResponse(
                 List.of(
                         new RecommendedLocationResponse("신촌역", "접근성 좋고 맛집이 많아요! 😋", "설명1"),
                         new RecommendedLocationResponse("이대역", "학생들이 많아 맛집이 많아요! 🍜", "설명2")
                 )
         );
 
-        GenerateContentResponse mockGenerateResponse = mock(GenerateContentResponse.class);
+        final GenerateContentResponse mockGenerateResponse = mock(GenerateContentResponse.class);
         doReturn(mockGenerateResponse)
                 .when(googleGeminiClient)
                 .generateWith(anyString(), any(GenerateContentConfig.class));
@@ -86,7 +87,7 @@ class GoogleGeminiClientTest {
                 .thenReturn(expectedResponse);
 
         // When
-        RecommendedLocationsResponse result = googleGeminiClient.generateResponse(stationNames, requirement);
+        final RecommendedLocationsResponse result = googleGeminiClient.generateResponse(stationNames, candidateNames, requirement);
 
         // Then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -103,15 +104,15 @@ class GoogleGeminiClientTest {
     @Test
     void generateWithStringPromptSuccessTest() {
         // Given
-        String prompt = "테스트 프롬프트";
-        GenerateContentConfig config = getBasicConfig();
+        final String prompt = "테스트 프롬프트";
+        final GenerateContentConfig config = getBasicConfig();
 
-        GenerateContentResponse expectedResponse = mock(GenerateContentResponse.class);
+        final GenerateContentResponse expectedResponse = mock(GenerateContentResponse.class);
 
         doReturn(expectedResponse).when(googleGeminiClient).generate(any(List.class), any(GenerateContentConfig.class));
 
         // When
-        GenerateContentResponse result = googleGeminiClient.generateWith(prompt, config);
+        final GenerateContentResponse result = googleGeminiClient.generateWith(prompt, config);
 
         // Then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -124,8 +125,8 @@ class GoogleGeminiClientTest {
     @Test
     void invalidArgumentTest() {
         // Given
-        List<Content> contents = new ArrayList<>();
-        GenerateContentConfig config = getBasicConfig();
+        final List<Content> contents = new ArrayList<>();
+        final GenerateContentConfig config = getBasicConfig();
 
         doThrow(new ClientException(400, "INVALID_ARGUMENT", "요청 본문의 형식이 잘못되었습니다."))
                 .when(googleGeminiClient)
@@ -142,8 +143,8 @@ class GoogleGeminiClientTest {
     @Test
     void invalidApiKeyTest() {
         // Given
-        List<Content> contents = getBasicContents();
-        GenerateContentConfig config = getBasicConfig();
+        final List<Content> contents = getBasicContents();
+        final GenerateContentConfig config = getBasicConfig();
 
         doThrow(new ClientException(403, "PERMISSION_DENIED", "API key not valid. Please pass a valid API key."))
                 .when(googleGeminiClient)
@@ -160,8 +161,8 @@ class GoogleGeminiClientTest {
     @Test
     void exceededTokenQuotaTest() {
         // Given
-        List<Content> contents = getBasicContents();
-        GenerateContentConfig config = getBasicConfig();
+        final List<Content> contents = getBasicContents();
+        final GenerateContentConfig config = getBasicConfig();
 
         doThrow(new ClientException(429, "RESOURCE_EXHAUSTED", "비율 제한을 초과했습니다."))
                 .when(googleGeminiClient)
@@ -178,8 +179,8 @@ class GoogleGeminiClientTest {
     @Test
     void serverUnavailableTest() {
         // Given
-        List<Content> contents = getBasicContents();
-        GenerateContentConfig config = getBasicConfig();
+        final List<Content> contents = getBasicContents();
+        final GenerateContentConfig config = getBasicConfig();
 
         doThrow(new ServerException(503, "현재 구매할 수 없음", "서비스가 일시적으로 과부하되거나 다운되었을 수 있습니다."))
                 .when(googleGeminiClient)
@@ -196,8 +197,8 @@ class GoogleGeminiClientTest {
     @Test
     void extractResponseInvalidJsonTest() throws IOException {
         // Given
-        String invalidJson = "유효하지 않은 JSON";
-        GenerateContentResponse fakeResponse = GenerateContentResponse.builder()
+        final String invalidJson = "유효하지 않은 JSON";
+        final GenerateContentResponse fakeResponse = GenerateContentResponse.builder()
                 .candidates(List.of(
                         Candidate.builder()
                                 .content(Content.fromParts(Part.fromText(invalidJson)))
@@ -216,8 +217,8 @@ class GoogleGeminiClientTest {
     @Test
     void extractResponseEmptyResponseTest() {
         // Given
-        String emptyResponse = "   ";
-        GenerateContentResponse fakeResponse = GenerateContentResponse.builder()
+        final String emptyResponse = "   ";
+        final GenerateContentResponse fakeResponse = GenerateContentResponse.builder()
                 .candidates(List.of(
                         Candidate.builder()
                                 .content(Content.fromParts(Part.fromText(emptyResponse)))
@@ -236,8 +237,8 @@ class GoogleGeminiClientTest {
     @Test
     void otherGeminiApiExceptionTest() {
         // Given
-        List<Content> contents = getBasicContents();
-        GenerateContentConfig config = getBasicConfig();
+        final List<Content> contents = getBasicContents();
+        final GenerateContentConfig config = getBasicConfig();
 
         doThrow(new ServerException(500, "INTERNAL", "Google 측에서 예기치 않은 오류가 발생했습니다."))
                 .when(googleGeminiClient)
@@ -251,7 +252,7 @@ class GoogleGeminiClientTest {
     }
 
     private List<Content> getBasicContents() {
-        List<Content> contents = new ArrayList<>();
+        final List<Content> contents = new ArrayList<>();
         contents.add(Content.fromParts(Part.fromText(PromptGenerator.ADDITIONAL_PROMPT)));
         return contents;
     }

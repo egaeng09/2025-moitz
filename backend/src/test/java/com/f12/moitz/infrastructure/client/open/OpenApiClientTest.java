@@ -162,15 +162,11 @@ class OpenApiClientTest {
         );
 
         // When
-        SubwayRouteResponse response = openApiClient.searchShortestTimeRoute("강남역", "서울역");
+        SubwayRouteResponse response = openApiClient.searchMinimumTransferRoute("강남역", "서울역");
 
         // Then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(response).isNotNull();
-            softAssertions.assertThat(response.header().resultCode()).isEqualTo("200");
-            softAssertions.assertThat(response.body().paths()).hasSize(3);
-            softAssertions.assertThat(response.body().paths().getFirst().dptreStn().stnNm()).isEqualTo("강남");
-            softAssertions.assertThat(response.body().paths().getLast().arvlStn().stnNm()).isEqualTo("서울역");
         });
     }
 

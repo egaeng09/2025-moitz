@@ -1,3 +1,5 @@
+import { LocationRequirement } from './LocationRequirement';
+
 export type StartingPlace = {
   id: number;
   index: number;
@@ -48,6 +50,7 @@ export type RecommendedLocation = {
 };
 
 export type Location = {
+  requirement: LocationRequirement;
   startingPlaces: StartingPlace[];
   recommendedLocations: RecommendedLocation[];
 };

@@ -19,12 +19,15 @@ import com.f12.moitz.domain.Point;
 import com.f12.moitz.domain.RecommendedPlace;
 import com.f12.moitz.domain.Route;
 import com.f12.moitz.domain.TravelMethod;
+import com.f12.moitz.domain.subway.SubwayLine;
+import com.f12.moitz.domain.subway.SubwayStation;
 import com.f12.moitz.domain.Path;
 import com.f12.moitz.domain.Result;
 import com.f12.moitz.domain.repository.RecommendResultRepository;
 import com.f12.moitz.infrastructure.client.gemini.dto.RecommendedLocationResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +50,7 @@ class RecommendationServiceTest {
     private PlaceRecommender placeRecommender;
 
     @Mock
-    private PlaceService placeService;
+    private SubwayStationService subwayStationService;
 
     @Mock
     private RouteFinder routeFinder;
@@ -61,7 +64,7 @@ class RecommendationServiceTest {
     void setUp() {
         recommendationMapper = new RecommendationMapper();
         recommendationService = new RecommendationService(
-                placeService,
+                subwayStationService,
                 placeRecommender,
                 locationRecommender,
                 routeFinder,
@@ -74,34 +77,33 @@ class RecommendationServiceTest {
     @DisplayName("추천 요청 시 올바른 최종 결과를 저장해야 한다")
     void recommendLocation_Success() {
         // Given
-
         final RecommendationRequest request = new RecommendationRequest(List.of("강남역", "역삼역"), "CHAT");
-        final Place gangnam = new Place("강남역", new Point(127.027, 37.497));
-        final Place yeoksam = new Place("역삼역", new Point(127.036, 37.501));
-        final List<Place> startingPlaces = List.of(gangnam, yeoksam);
-        given(placeService.findByNames(anyList())).willReturn(startingPlaces);
+        final SubwayStation gangnam = new SubwayStation("강남역", new Point(127.027, 37.497));
+        final SubwayStation yeoksam = new SubwayStation("역삼역", new Point(127.036, 37.501));
+        given(subwayStationService.findByName("강남역")).willReturn(Optional.of(gangnam));
+        given(subwayStationService.findByName("역삼역")).willReturn(Optional.of(yeoksam));
 
         final RecommendedLocationsResponse mockLocationsResponse = new RecommendedLocationsResponse(List.of(
                 new RecommendedLocationResponse("선릉역", "이유1", "설명1"),
                 new RecommendedLocationResponse("삼성역", "이유2", "설명2")));
-        given(locationRecommender.recommendLocations(anyList(), anyString())).willReturn(mockLocationsResponse);
+        given(locationRecommender.recommendLocations(anyList(), anyList(), anyString())).willReturn(mockLocationsResponse);
 
-        final Place seolleung = new Place("선릉역", new Point(127.048, 37.504));
-        final Place samsung = new Place("삼성역", new Point(127.063, 37.508));
-        given(placeService.findByName("선릉역")).willReturn(seolleung);
-        given(placeService.findByName("삼성역")).willReturn(samsung);
+        final SubwayStation seolleung = new SubwayStation("선릉역", new Point(127.048, 37.504));
+        final SubwayStation samsung = new SubwayStation("삼성역", new Point(127.063, 37.508));
+        given(subwayStationService.getByName("선릉역")).willReturn(seolleung);
+        given(subwayStationService.getByName("삼성역")).willReturn(samsung);
 
         Map<Place, List<RecommendedPlace>> mockRecommendedPlaces = Map.of(
-                seolleung, List.of(new RecommendedPlace("스타벅스 선릉점", "카페", 5, "url")),
-                samsung, List.of(new RecommendedPlace("스타벅스 삼성점", "카페", 4, "url"))
+                seolleung, List.of(new RecommendedPlace("스타벅스 선릉점", new Point(127.048, 37.504), "카페", 5, "url")),
+                samsung, List.of(new RecommendedPlace("스타벅스 삼성점", new Point(127.063, 37.508), "카페", 4, "url"))
         );
         given(placeRecommender.recommendPlaces(anyList(), any(String.class))).willReturn(mockRecommendedPlaces);
 
         List<Route> mockRoutes = List.of(
-                new Route(List.of(new Path(gangnam, seolleung, TravelMethod.SUBWAY, 10, "2호선"))),
-                new Route(List.of(new Path(yeoksam, seolleung, TravelMethod.SUBWAY, 5, "2호선"))),
-                new Route(List.of(new Path(gangnam, samsung, TravelMethod.SUBWAY, 999, "2호선"))),
-                new Route(List.of(new Path(yeoksam, samsung, TravelMethod.SUBWAY, 10, "2호선")))
+                new Route(List.of(new Path(gangnam, seolleung, TravelMethod.SUBWAY, 10, SubwayLine.fromTitle("2호선")))),
+                new Route(List.of(new Path(yeoksam, seolleung, TravelMethod.SUBWAY, 5, SubwayLine.fromTitle("2호선")))),
+                new Route(List.of(new Path(gangnam, samsung, TravelMethod.SUBWAY, 999, SubwayLine.fromTitle("2호선")))),
+                new Route(List.of(new Path(yeoksam, samsung, TravelMethod.SUBWAY, 10, SubwayLine.fromTitle("2호선"))))
         );
         given(routeFinder.findRoutes(anyList())).willReturn(mockRoutes);
 
@@ -123,4 +125,5 @@ class RecommendationServiceTest {
                 .collect(Collectors.toList()))
                 .containsExactlyInAnyOrder("선릉역", "삼성역");
     }
+
 }

@@ -1,11 +1,13 @@
 import dotenv from 'dotenv';
 import { http, HttpResponse } from 'msw';
 
+import { getApiBaseUrl } from '@shared/config/env';
+
 import { LocationsMock } from './LocationsMock';
 
 dotenv.config({ path: '.env' });
 
-const BASE_URL = process.env.API_BASE_URL;
+const BASE_URL = getApiBaseUrl();
 
 export const handlers = [
   http.post(`${BASE_URL}/recommendations`, async () => {

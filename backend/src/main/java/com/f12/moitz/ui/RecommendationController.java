@@ -1,8 +1,9 @@
 package com.f12.moitz.ui;
 
 import com.f12.moitz.application.RecommendationService;
-import com.f12.moitz.application.dto.*;
-
+import com.f12.moitz.application.dto.RecommendationCreateResponse;
+import com.f12.moitz.application.dto.RecommendationRequest;
+import com.f12.moitz.application.dto.RecommendationsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +27,7 @@ public class RecommendationController implements SwaggerRecommendationController
 
     @GetMapping("/{id}")
     public ResponseEntity<RecommendationsResponse> getRecommendationResult(@PathVariable("id") String id){
-        RecommendationsResponse response = recommendationService.findResultById(id);
+        RecommendationsResponse response = recommendationService.getById(id);
         return ResponseEntity.ok().body(response);
     }
-
 }

@@ -77,4 +77,5 @@
 
   /* 공통 너비 */
   --layout-max-width: 400px;
+  --layout-min-width: 320px;
 }

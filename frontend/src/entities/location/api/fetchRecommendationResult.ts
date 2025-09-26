@@ -8,8 +8,10 @@ export const fetchRecommendationResult = async (
 ): Promise<Location> => {
   const data = await apiClient.get<LocationResponse>(`/recommendations/${id}`);
   const transformedData: Location = {
+    requirement: data.requirement,
     startingPlaces: data.startingPlaces,
     recommendedLocations: data.locations,
   };
+
   return transformedData;
 };

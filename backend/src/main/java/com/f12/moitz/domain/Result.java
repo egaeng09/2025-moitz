@@ -18,34 +18,44 @@ public class Result {
     @Id
     private ObjectId id;
 
+    private RecommendCondition recommendCondition;
+
     @CreatedDate
     @Indexed(expireAfter = "7d")
     private Instant createdAt;
 
-    private List<Place> startingPlaces;
+    private List<? extends Place> startingPlaces;
+
     private Recommendation recommendedLocations;
 
     public Result(
-            final List<Place> startingPlaces,
+            final RecommendCondition recommendCondition,
+            final List<? extends Place> startingPlaces,
             final Recommendation recommendedLocations
     ) {
-        validate(startingPlaces, recommendedLocations);
+        validate(recommendCondition, startingPlaces, recommendedLocations);
+        this.recommendCondition = recommendCondition;
         this.startingPlaces = startingPlaces;
         this.recommendedLocations = recommendedLocations;
     }
 
     public Result(
             final ObjectId id,
-            final List<Place> startingPlaces,
+            final RecommendCondition recommendCondition,
+            final List<? extends Place> startingPlaces,
             final Recommendation recommendedLocations
     ) {
-        validate(startingPlaces, recommendedLocations);
+        validate(recommendCondition, startingPlaces, recommendedLocations);
         this.id = id;
+        this.recommendCondition = recommendCondition;
         this.startingPlaces = startingPlaces;
         this.recommendedLocations = recommendedLocations;
     }
 
-    private void validate(final List<Place> startingPlaces, final Recommendation recommendedLocations) {
+    private void validate(final RecommendCondition recommendCondition, final List<? extends Place> startingPlaces, final Recommendation recommendedLocations) {
+        if (recommendCondition == null) {
+            throw new IllegalArgumentException("추천 조건은 null일 수 없습니다.");
+        }
         if (startingPlaces == null || startingPlaces.isEmpty()) {
             throw new IllegalArgumentException("출발지들은 비어있거나 null일 수 없습니다.");
         }

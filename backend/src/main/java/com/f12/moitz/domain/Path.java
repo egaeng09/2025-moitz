@@ -1,5 +1,6 @@
 package com.f12.moitz.domain;
 
+import com.f12.moitz.domain.subway.SubwayLine;
 import java.time.Duration;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,23 +14,24 @@ public class Path {
     private Place end;
     private TravelMethod travelMethod;
     private Duration travelTime;
-    private String subwayLineName;
+    private SubwayLine subwayLine;
+    // line -> Bus number / Subway line
 
     public Path(
             final Place start,
             final Place end,
             final TravelMethod travelMethod,
             final Duration travelTime,
-            final String subwayLineName
+            final SubwayLine subwayLine
     ) {
         validate(start, end, travelMethod, travelTime);
         validateStartToEnd(start, end, travelMethod);
-        validateSubwayLineName(travelMethod, subwayLineName);
+        validateSubwayLine(travelMethod, subwayLine);
         this.start = start;
         this.end = end;
         this.travelMethod = travelMethod;
         this.travelTime = travelTime;
-        this.subwayLineName = subwayLineName;
+        this.subwayLine = subwayLine;
     }
 
     public Path(
@@ -37,9 +39,9 @@ public class Path {
             final Place end,
             final TravelMethod travelMethod,
             final int travelTime,
-            final String subwayLineName
+            final SubwayLine subwayLine
     ) {
-        this(start, end, travelMethod, Duration.ofSeconds(travelTime), subwayLineName);
+        this(start, end, travelMethod, Duration.ofSeconds(travelTime), subwayLine);
     }
 
     private void validate(final Place start, final Place end, final TravelMethod travelMethod, final Duration travelTime) {
@@ -56,19 +58,29 @@ public class Path {
 
     private void validateStartToEnd(final Place start, final Place end,  final TravelMethod travelMethod) {
         if (!travelMethod.isTransfer() && start.equals(end)) {
-            throw new IllegalArgumentException("시작 장소와 끝 장소는 같을 수 없습니다.");
+            throw new IllegalArgumentException(
+                    String.format(
+                            "시작 장소(%s)와 끝 장소(%s)는 같을 수 없습니다.",
+                            start.getName(), end.getName()
+                    )
+            );
         }
         if (travelMethod.isTransfer() && !start.equals(end)) {
-            throw new IllegalArgumentException("환승 통로 이동에서의 시작과 끝 장소는 다를 수 없습니다..");
+            throw new IllegalArgumentException(
+                    String.format(
+                            "환승 통로 이동에서의 시작 장소(%s)와 끝 장소(%s)는 다를 수 없습니다.",
+                            start.getName(), end.getName()
+                    )
+            );
         }
     }
 
-    private void validateSubwayLineName(final TravelMethod travelMethod, final String subwayLineName) {
-        if (travelMethod != TravelMethod.SUBWAY && subwayLineName != null) {
+    private void validateSubwayLine(final TravelMethod travelMethod, final SubwayLine subwayLine) {
+        if (travelMethod != TravelMethod.SUBWAY && subwayLine != null) {
             throw new IllegalStateException("지하철이 아니라면 호선 정보를 지닐 수 없습니다.");
         }
-        if (travelMethod == TravelMethod.SUBWAY && subwayLineName == null) {
-            throw new IllegalStateException("지하철인 경우 지하철 노선명이 필수입니다.");
+        if (travelMethod == TravelMethod.SUBWAY && subwayLine == null) {
+            throw new IllegalStateException("지하철인 경우 지하철 호선 정보가 필수입니다.");
         }
     }
 

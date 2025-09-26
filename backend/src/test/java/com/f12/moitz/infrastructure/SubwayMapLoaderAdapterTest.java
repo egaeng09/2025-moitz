@@ -1,14 +1,10 @@
 package com.f12.moitz.infrastructure;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.f12.moitz.application.PlaceService;
+import com.f12.moitz.application.SubwayStationService;
 import com.f12.moitz.domain.repository.SubwayStationRepository;
-import com.f12.moitz.domain.subway.SubwayStation;
+import com.f12.moitz.infrastructure.adapter.SubwayMapLoaderAdapter;
 import com.f12.moitz.infrastructure.client.open.OpenApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.Map;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,14 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SubwayMapBuilderTest {
+class SubwayMapLoaderAdapterTest {
 
     @Autowired
     private OpenApiClient openApiClient;
     @Autowired
     private SubwayStationRepository subwayStationRepository;
     @Autowired
-    private PlaceService placeService;
+    private SubwayStationService subwayStationService;
 
     @DisplayName("지하철 노선도와 지하철역 Place를 업데이트한다")
     @Test
@@ -33,15 +29,15 @@ class SubwayMapBuilderTest {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules(); // JSR310 모듈 등록
 
-        SubwayMapBuilder subwayMapBuilder = new SubwayMapBuilder(subwayStationRepository, openApiClient);
+        SubwayMapLoaderAdapter subwayMapLoaderAdapter = new SubwayMapLoaderAdapter(openApiClient);
 
         // When
-        Map<String, SubwayStation> subwayMap = subwayMapBuilder.buildAndSaveToMongo();
+        // Map<String, SubwayStation> subwayMap = subwayMapLoaderAdapter.loadSubwayMap();
 
-        placeService.saveIfAbsent(new ArrayList<>(subwayMap.keySet()));
+        // subwayStationService.saveIfAbsent(new ArrayList<>(subwayMap.keySet()));
 
         // Then
-        assertThat(subwayMap).isNotEmpty();
+        // assertThat(subwayMap).isNotEmpty();
     }
 
 }

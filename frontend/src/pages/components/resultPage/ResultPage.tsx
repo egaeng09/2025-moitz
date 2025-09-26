@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router';
 import FallBackPage from '@pages/components/fallBackPage/FallBackPage';
 import useSelectedRecommendedLocation from '@pages/hooks/useSelectedLocation';
 
-import ProgressLoading from '@features/loading/components/progressLoading/ProgressLoading';
+import BaseLoading from '@features/loading/components/baseLoading/BaseLoading';
 import Map from '@features/map/components/map/Map';
 import BottomSheet from '@features/recommendation/components/bottomSheet/BottomSheet';
 
@@ -18,11 +18,7 @@ import * as resultPage from './resultPage.styled';
 function ResultPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const {
-    data: location,
-    isLoading,
-    getRecommendationResult,
-  } = useLocationsContext();
+  const { data: location, isLoading, getRecommendationResult } = useLocationsContext();
 
   const fetchResult = useCallback(async () => {
     try {
@@ -30,42 +26,37 @@ function ResultPage() {
     } catch {
       navigate('/');
     }
-  }, [id, navigate, getRecommendationResult]);
+  }, []);
 
   useEffect(() => {
     if (!id) {
       navigate('/');
       return;
     }
+    if (!location || location.recommendedLocations.length === 0) {
+      fetchResult();
+    }
+  }, [id, location]);
 
-    fetchResult();
-  }, [id, fetchResult]);
-
-  const { selectedLocation, changeSelectedLocation } =
-    useSelectedRecommendedLocation();
+  const { selectedLocation, changeSelectedLocation } = useSelectedRecommendedLocation();
 
   const handleSpotClick = (location: RecommendedLocation) => {
     changeSelectedLocation(location);
   };
 
-  if (isLoading) return <ProgressLoading />;
+  if (isLoading) {
+    return <BaseLoading />;
+  }
+
   if (!location || location.recommendedLocations.length === 0)
     return (
-      <FallBackPage
-        reset={() => {}}
-        error={new Error('추천 결과가 없습니다.')}
-      />
+      <FallBackPage reset={() => navigate('/')} error={new Error('추천 결과가 없습니다.')} text="홈으로 돌아가기" />
     );
 
   const { startingPlaces, recommendedLocations } = location;
 
   return (
-    <div
-      css={[
-        flex({ direction: 'column', justify: 'flex-end' }),
-        resultPage.base(),
-      ]}
-    >
+    <div css={[flex({ direction: 'column', justify: 'flex-end' }), resultPage.base()]}>
       <Map
         startingLocations={startingPlaces}
         recommendedLocations={recommendedLocations}
