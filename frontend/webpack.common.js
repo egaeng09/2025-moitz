@@ -67,6 +67,14 @@ export default function common(envVars = {}) {
                 : 'public/robots-dev.txt',
             to: 'robots.txt',
           },
+          ...(process.env.NODE_ENV === 'production'
+            ? [
+                {
+                  from: 'public/sitemap.xml',
+                  to: 'sitemap.xml',
+                },
+              ]
+            : []),
         ],
       }),
     ],
