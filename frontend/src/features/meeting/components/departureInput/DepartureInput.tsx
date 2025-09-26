@@ -52,7 +52,6 @@ function DepartureInput({
         return;
       }
 
-      console.log(inputValue);
       const trimmedValue = inputValue.trim();
       if (trimmedValue) {
         handleStationSelect(trimmedValue);
