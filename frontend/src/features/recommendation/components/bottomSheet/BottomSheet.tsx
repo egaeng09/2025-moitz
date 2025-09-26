@@ -6,6 +6,7 @@ import {
   RecommendedLocation,
   StartingPlace,
 } from '@entities/location/types/Location';
+import { LocationRequirement } from '@entities/location/types/LocationRequirement';
 
 import BottomSheetDetail from '../bottomSheetDetail/BottomSheetDetail';
 import BottomSheetList from '../bottomSheetList/BottomSheetList';
@@ -18,6 +19,7 @@ interface BottomSheetProps {
   startingLocations: StartingPlace[];
   recommendedLocations: RecommendedLocation[];
   selectedLocation: SelectedLocation;
+  conditionID: LocationRequirement;
   handleSpotClick: (spot: RecommendedLocation) => void;
 }
 
@@ -25,6 +27,7 @@ function BottomSheet({
   startingLocations,
   recommendedLocations,
   selectedLocation,
+  conditionID,
   handleSpotClick,
 }: BottomSheetProps) {
   const [positionPercent, setPositionPercent] = useState(60);
@@ -141,6 +144,7 @@ function BottomSheet({
         <BottomSheetList
           startingPlaces={startingLocations}
           recommendedLocations={recommendedLocations}
+          conditionID={conditionID}
           onSpotClick={handleSpotClick}
         />
       )}

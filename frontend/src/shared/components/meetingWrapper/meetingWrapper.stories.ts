@@ -1,13 +1,18 @@
+import { CONDITION_CARD_TEXT } from '@features/meeting/constant/conditionCard';
+
 import { StartingPlacesMock } from '@mocks/LocationsMock';
 
 import { withContainer } from '@sb/decorators/withContainer';
 
-import StartingSpotWrapper from './StartingSpotWrapper';
+import MeetingWrapper from './MeetingWrapper';
 
 import type { Meta, StoryObj } from '@storybook/react-webpack5';
 
+const conditionIdList = Object.values(CONDITION_CARD_TEXT).map(
+  (condition) => condition.ID,
+);
 const meta = {
-  component: StartingSpotWrapper,
+  component: MeetingWrapper,
   decorators: [withContainer],
   parameters: {
     layout: 'centered',
@@ -18,8 +23,13 @@ const meta = {
       control: { type: 'object' },
       description: '출발지 이름 목록',
     },
+    conditionID: {
+      control: { type: 'select' },
+      options: conditionIdList,
+      description: '출발지 조건',
+    },
   },
-} satisfies Meta<typeof StartingSpotWrapper>;
+} satisfies Meta<typeof MeetingWrapper>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -27,6 +37,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     startingPlaces: StartingPlacesMock,
+    conditionID: 'CHAT',
   },
 };
 
@@ -50,5 +61,6 @@ export const Long: Story = {
       { index: 14, name: '을지로5가역', id: 14, x: 14, y: 14 },
       { index: 15, name: '을지로6가역', id: 15, x: 15, y: 15 },
     ],
+    conditionID: 'CHAT',
   },
 };

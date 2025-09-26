@@ -13,3 +13,7 @@ export const title = () => css`
   color: ${colorToken.gray[1]};
   white-space: nowrap;
 `;
+
+export const content = () => css`
+  color: ${colorToken.gray[4]};
+`;

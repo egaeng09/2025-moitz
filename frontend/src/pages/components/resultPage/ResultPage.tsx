@@ -86,6 +86,7 @@ function ResultPage() {
         <BottomSheet
           startingLocations={location.startingPlaces}
           recommendedLocations={location.recommendedLocations}
+          conditionID={location.requirement}
           selectedLocation={selectedLocation}
           handleSpotClick={handleSpotClick}
         />
