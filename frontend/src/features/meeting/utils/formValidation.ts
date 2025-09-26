@@ -31,6 +31,11 @@ export const validateDepartureListMaxLength = (
 export const validateStationName = (name: string): ValidationError => {
   const stationName = name.trim();
 
+  const exactMatch = STATION_LIST.find((station) => station === stationName);
+  if (exactMatch) {
+    return { isValid: true, message: '' };
+  }
+
   const matched = STATION_LIST.filter((station) =>
     station.includes(stationName),
   );
