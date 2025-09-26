@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { typography } from '@shared/styles/default.styled';
+import { flex, typography } from '@shared/styles/default.styled';
 
 import * as progressText from './progressText.styled';
 
@@ -20,7 +20,15 @@ function ProgressText({ text }: ProgressTextProps) {
   }, []);
 
   return (
-    <div css={[typography.b2, progressText.text()]}>{text[textIndex]}</div>
+    <span
+      css={[
+        flex({ align: 'center', justify: 'center' }),
+        typography.b2,
+        progressText.text(),
+      ]}
+    >
+      {text[textIndex]}
+    </span>
   );
 }
 

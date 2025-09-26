@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.f12.moitz.domain.subway.SubwayLine;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -79,14 +80,14 @@ class RecommendationTest {
         final Place endPlace = new Place("강남역", new Point(127.2, 37.2));
         final String subwayLineName = "2호선";
 
-        final Path path1 = new Path(startPlace, intermediatePlace, TravelMethod.SUBWAY, path1TravelTime, subwayLineName);
-        final Path path2 = new Path(intermediatePlace, endPlace, TravelMethod.SUBWAY, path2TravelTime, subwayLineName);
+        final Path path1 = new Path(startPlace, intermediatePlace, TravelMethod.SUBWAY, path1TravelTime, SubwayLine.fromTitle(subwayLineName));
+        final Path path2 = new Path(intermediatePlace, endPlace, TravelMethod.SUBWAY, path2TravelTime, SubwayLine.fromTitle(subwayLineName));
 
         final List<Path> paths = List.of(path1, path2);
         final Route route = new Route(paths);
         final Routes routes = new Routes(List.of(route));
 
-        final RecommendedPlace recommendedPlace = new RecommendedPlace("스타벅스", "카페", 5, "url");
+        final RecommendedPlace recommendedPlace = new RecommendedPlace("스타벅스", new Point(127.2, 37.21), "카페", 5, "url");
         final List<RecommendedPlace> recommendedPlaces = List.of(recommendedPlace);
         return new Candidate(endPlace, routes, recommendedPlaces, "123", "123");
     }

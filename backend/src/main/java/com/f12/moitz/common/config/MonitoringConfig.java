@@ -4,10 +4,10 @@ import io.micrometer.cloudwatch2.CloudWatchConfig;
 import io.micrometer.cloudwatch2.CloudWatchMeterRegistry;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.config.MeterFilter;
+import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.time.Duration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient;
 
@@ -15,7 +15,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient;
 public class MonitoringConfig {
 
     @Bean
-    public CloudWatchConfig cloudWatchConfig() {
+    public CloudWatchConfig cloudWatchConfig(@Value("${monitoring.namespace}") final String namespace) {
         return new CloudWatchConfig() {
             @Override
             public String get(String key) {
@@ -24,7 +24,7 @@ public class MonitoringConfig {
 
             @Override
             public String namespace() {
-                return "Moitz2025Dev";
+                return namespace;
             }
 
             @Override
@@ -55,11 +55,12 @@ public class MonitoringConfig {
         return MeterFilter.denyUnless(id -> {
             String uri = id.getTag("uri");
             return id.getName().startsWith("http.server.requests") &&
-                    uri != null && !uri.contains("swagger") && !uri.contains("api-docs")
-                    || id.getName().startsWith("executor.completed") || id.getName().startsWith("executor.queued")
-                    || id.getName().startsWith("jvm.threads")
-                    || id.getName().startsWith("jvm.memory.used")
-                    || id.getName().startsWith("process");
+                   uri != null && !uri.contains("swagger") && !uri.contains("api-docs")
+                   || id.getName().startsWith("resilience4j.circuitbreaker.")
+                   || id.getName().startsWith("executor.completed") || id.getName().startsWith("executor.queued")
+                   || id.getName().startsWith("jvm.threads")
+                   || id.getName().startsWith("jvm.memory.used")
+                   || id.getName().startsWith("process");
         });
     }
 

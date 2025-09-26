@@ -10,6 +10,7 @@ import com.f12.moitz.application.port.dto.ReasonAndDescription;
 import com.f12.moitz.domain.Candidate;
 import com.f12.moitz.domain.Path;
 import com.f12.moitz.domain.Place;
+import com.f12.moitz.domain.RecommendCondition;
 import com.f12.moitz.domain.Recommendation;
 import com.f12.moitz.domain.RecommendedPlace;
 import com.f12.moitz.domain.Route;
@@ -25,8 +26,9 @@ public class RecommendationMapper {
 
     public RecommendationsResponse toResponse(final Result result) {
         final int minTime = result.getBestRecommendationTime();
-
+        final String condition = getCondition(result);
         return new RecommendationsResponse(
+                condition,
                 IntStream.range(0, result.getStartingPlacesCount())
                         .mapToObj(index -> toStartingPlaceResponse(index, result.getStartingPlaces().get(index)))
                         .toList(),
@@ -39,6 +41,14 @@ public class RecommendationMapper {
         );
     }
 
+    private String getCondition(final Result result) {
+        final RecommendCondition recommendCondition =
+                result.getRecommendCondition() == null ? RecommendCondition.NOT_SELECTED
+                : result.getRecommendCondition();
+
+        return recommendCondition.getTitle();
+    }
+
     public Recommendation toRecommendation(
             final Map<Place, ReasonAndDescription> generatedPlaces,
             final Map<Place, List<RecommendedPlace>> placeListMap,
@@ -46,6 +56,8 @@ public class RecommendationMapper {
     ) {
         return new Recommendation(
                 generatedPlaces.entrySet().stream()
+                        // TODO: 카테고리 키워드 재정의 혹은 네이버 장소 추천 도입 고려
+                        .filter(entry -> placeListMap.get(entry.getKey()) != null)
                         .map(place -> new Candidate(
                                 place.getKey(),
                                 placeRoutes.get(place.getKey()),
@@ -58,10 +70,12 @@ public class RecommendationMapper {
     }
 
     public Result toResult(
-            final List<Place> startingPlaces,
+            final RecommendCondition recommendCondition,
+            final List<? extends Place> startingPlaces,
             final Recommendation recommendation
     ) {
         return new Result(
+                recommendCondition,
                 startingPlaces,
                 recommendation
         );
@@ -113,7 +127,9 @@ public class RecommendationMapper {
                     RecommendedPlace p = places.get(i);
                     return new PlaceRecommendResponse(
                             i + 1,
-                            p.getPlaceName(),
+                            p.getX(),
+                            p.getY(),
+                            p.getName(),
                             p.getCategory(),
                             p.getWalkingTime(),
                             p.getUrl()
@@ -151,7 +167,7 @@ public class RecommendationMapper {
                 path.getEnd().getName(),
                 path.getEnd().getPoint().getX(),
                 path.getEnd().getPoint().getY(),
-                path.getSubwayLineName(),
+                path.getSubwayLine() != null ? path.getSubwayLine().getTitle() : null,
                 (int) path.getTravelTime().toMinutes()
         );
     }

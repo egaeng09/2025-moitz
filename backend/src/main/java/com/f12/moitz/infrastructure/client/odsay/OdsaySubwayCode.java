@@ -4,7 +4,7 @@ import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
-public enum SubwayCode {
+public enum OdsaySubwayCode {
 
     SEOUL_METRO_LINE1("1호선", 1),
     SEOUL_METRO_LINE2("2호선", 2),
@@ -34,14 +34,14 @@ public enum SubwayCode {
     private final String title;
     private final int code;
 
-    SubwayCode(final String title, final int code) {
+    OdsaySubwayCode(final String title, final int code) {
         this.title = title;
         this.code = code;
     }
 
-    public static SubwayCode fromCode(final int code) {
+    public static OdsaySubwayCode fromCode(final int code) {
         return Arrays.stream(values())
-                .filter(subwayCode -> subwayCode.code == code)
+                .filter(odsaySubwayCode -> odsaySubwayCode.code == code)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("코드에 해당하는 지하철 노선 정보가 존재하지 않습니다."));
     }

@@ -2,6 +2,7 @@ package com.f12.moitz.common.error;
 
 import com.f12.moitz.common.error.exception.BadRequestException;
 import com.f12.moitz.common.error.exception.ExternalApiException;
+import com.f12.moitz.common.error.exception.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,22 @@ public class GlobalExceptionHandler {
     ) {
         log.warn("BadRequest Exception - URI '{} {}' ", request.getMethod(), request.getRequestURI(), e);
         final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(
+                httpStatus.value(),
+                e.getErrorCode(),
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(httpStatus).body(errorResponse);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(
+            final NotFoundException e,
+            final HttpServletRequest request
+    ) {
+        log.warn("NotFound Exception - URI '{} {}' ", request.getMethod(), request.getRequestURI(), e);
+        final HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         ErrorResponse errorResponse = new ErrorResponse(
                 httpStatus.value(),
                 e.getErrorCode(),

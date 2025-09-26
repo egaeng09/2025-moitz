@@ -1,27 +1,26 @@
 package com.f12.moitz.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class RecommendedPlace {
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+public class RecommendedPlace extends Place {
 
-    private final String placeName;
-    private final String category;
-    private final int walkingTime;
-    private final String url;
+    private String category;
+    private int walkingTime;
+    private String url;
 
-    public RecommendedPlace(final String placeName, final String category, final int walkingTime, final String url) {
-        validate(placeName, category, walkingTime, url);
-        this.placeName = placeName;
+    public RecommendedPlace(final String placeName, final Point point, final String category, final int walkingTime, final String url) {
+        super(placeName, point);
+        validate(category, walkingTime, url);
         this.category = category;
         this.walkingTime = walkingTime;
         this.url = url;
     }
 
-    private void validate(final String placeName, final String category, final int walkingTime, final String url) {
-        if (placeName == null) {
-            throw new IllegalArgumentException("장소 이름은 필수입니다.");
-        }
+    private void validate(final String category, final int walkingTime, final String url) {
         if (category == null || category.isEmpty()) {
             throw new IllegalArgumentException("카테고리는 필수입니다.");
         }
@@ -31,6 +30,14 @@ public class RecommendedPlace {
         if (url == null || url.isEmpty()) {
             throw new IllegalArgumentException("URL은 필수입니다.");
         }
+    }
+
+    public double getX() {
+        return this.getPoint().getX();
+    }
+
+    public double getY() {
+        return this.getPoint().getY();
     }
 
 }

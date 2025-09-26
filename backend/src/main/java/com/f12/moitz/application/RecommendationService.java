@@ -9,6 +9,9 @@ import com.f12.moitz.application.port.RouteFinder;
 import com.f12.moitz.application.port.dto.ReasonAndDescription;
 import com.f12.moitz.application.port.dto.StartEndPair;
 import com.f12.moitz.application.utils.RecommendationMapper;
+import com.f12.moitz.common.error.exception.BadRequestException;
+import com.f12.moitz.common.error.exception.GeneralErrorCode;
+import com.f12.moitz.common.error.exception.NotFoundException;
 import com.f12.moitz.domain.Place;
 import com.f12.moitz.domain.RecommendCondition;
 import com.f12.moitz.domain.Recommendation;
@@ -17,6 +20,7 @@ import com.f12.moitz.domain.Route;
 import com.f12.moitz.domain.Routes;
 import com.f12.moitz.domain.Result;
 import com.f12.moitz.domain.repository.RecommendResultRepository;
+import com.f12.moitz.domain.subway.SubwayStation;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +37,7 @@ import org.springframework.util.StopWatch;
 @Service
 public class RecommendationService {
 
-    private final PlaceService placeService;
+    private final SubwayStationService subwayStationService;
     private final PlaceRecommender placeRecommender;
     private final LocationRecommender locationRecommender;
     private final RouteFinder routeFinder;
@@ -42,14 +46,14 @@ public class RecommendationService {
     private final RecommendResultRepository recommendResultRepository;
 
     public RecommendationService(
-            @Autowired final PlaceService placeService,
+            @Autowired final SubwayStationService subwayStationService,
             @Qualifier("placeRecommenderAdapter") final PlaceRecommender placeRecommender,
             @Autowired final LocationRecommender locationRecommender,
             @Qualifier("subwayRouteFinderAdapter") final RouteFinder routeFinder,
             @Autowired final RecommendationMapper recommendationMapper,
-            @Autowired RecommendResultRepository recommendResultRepository
+            @Autowired final RecommendResultRepository recommendResultRepository
     ) {
-        this.placeService = placeService;
+        this.subwayStationService = subwayStationService;
         this.placeRecommender = placeRecommender;
         this.locationRecommender = locationRecommender;
         this.routeFinder = routeFinder;
@@ -57,32 +61,28 @@ public class RecommendationService {
         this.recommendResultRepository = recommendResultRepository;
     }
 
-    /*
-        * /locations 유지를 위해 임시로 사용되는 추천 서비스 메소드입니다.
-     */
-    public com.f12.moitz.application.dto.temp.RecommendationsResponse tempRecommendLocation(final RecommendationRequest request) {
-        final RecommendationsResponse result = findResultById(recommendLocation(request));
-        return new com.f12.moitz.application.dto.temp.RecommendationsResponse(
-                result.startingPlaces(),
-                result.locations()
-        );
-    }
-
     public String recommendLocation(final RecommendationRequest request) {
         StopWatch stopWatch = new StopWatch("추천 서비스 전체");
+        log.debug("추천 서비스 시작");
 
         stopWatch.start("지역 추천");
-        final String requirement = RecommendCondition.fromTitle(request.requirement()).getKeyword();
-        final List<Place> startingPlaces = placeService.findByNames(request.startingPlaceNames());
+        final RecommendCondition recommendCondition = RecommendCondition.fromTitle(request.requirement());
+        final String requirement = recommendCondition.getKeyword();
+        final List<SubwayStation> startingPlaces = getByNames(request.startingPlaceNames());
+        final List<SubwayStation> candidatePlaces = subwayStationService.generateCandidatePlace(startingPlaces);
+
+        final List<String> startingPlaceNames = getPlaceNames(startingPlaces);
+        final List<String> candidatePlaceNames = getPlaceNames(candidatePlaces);
 
         final RecommendedLocationsResponse recommendedLocationsResponse = locationRecommender.recommendLocations(
-                request.startingPlaceNames(),
+                startingPlaceNames,
+                candidatePlaceNames,
                 requirement
         );
         final Map<Place, ReasonAndDescription> generatedPlacesWithReason = recommendedLocationsResponse.recommendations()
                 .stream()
                 .collect(Collectors.toMap(
-                        recommendation -> placeService.findByName(recommendation.locationName()),
+                        recommendation -> subwayStationService.getByName(recommendation.locationName()),
                         recommendation -> new ReasonAndDescription(
                                 recommendation.reason(),
                                 recommendation.description()
@@ -114,18 +114,32 @@ public class RecommendationService {
                 placeRoutes
         );
         stopWatch.stop();
-        System.out.println(stopWatch.prettyPrint());
+        log.debug("추천 서비스 완료. {}", stopWatch.shortSummary());
 
         return recommendResultRepository.saveAndReturnId(
                 recommendationMapper.toResult(
+                        recommendCondition,
                         startingPlaces,
                         recommendation
                 )
         ).toHexString().toUpperCase();
     }
 
-    public Map<Place, Routes> findRoutesForAllAsync(
-            final List<Place> startingPlaces,
+    private List<String> getPlaceNames(final List<? extends Place> places) {
+        return places.stream()
+                .map(Place::getName)
+                .toList();
+    }
+
+    private List<SubwayStation> getByNames(final List<String> names) {
+        return names.stream()
+                .map(name -> subwayStationService.findByName(name)
+                        .orElseThrow(() -> new BadRequestException(GeneralErrorCode.INPUT_INVALID_START_LOCATION)))
+                .toList();
+    }
+
+    private Map<Place, Routes> findRoutesForAllAsync(
+            final List<? extends Place> startingPlaces,
             final List<Place> generatedPlaces
     ) {
         final List<StartEndPair> allPairs = generatedPlaces.stream()
@@ -163,10 +177,18 @@ public class RecommendationService {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public RecommendationsResponse findResultById(final String id) {
-        final Result result = recommendResultRepository.findById(new ObjectId(id))
-                .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 결과를 찾을 수 없습니다."));
+    public RecommendationsResponse getById(final String id) {
+        final Result result = recommendResultRepository.findById(parseObjectId(id))
+                .orElseThrow(() -> new NotFoundException(GeneralErrorCode.INPUT_INVALID_RESULT));
         return recommendationMapper.toResponse(result);
+    }
+
+    private ObjectId parseObjectId(final String id) {
+        try {
+            return new ObjectId(id);
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException(GeneralErrorCode.INPUT_INVALID_RESULT);
+        }
     }
 
 }

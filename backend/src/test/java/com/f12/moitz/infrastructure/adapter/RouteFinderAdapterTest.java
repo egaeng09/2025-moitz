@@ -77,7 +77,7 @@ class RouteFinderAdapterTest {
             softAssertions.assertThat(firstLeg.getEnd().getName()).isEqualTo("시청역");
             softAssertions.assertThat(firstLeg.getTravelMethod()).isEqualTo(TravelMethod.SUBWAY);
             softAssertions.assertThat(firstLeg.getTravelTime().toMinutes()).isEqualTo(15);
-            softAssertions.assertThat(firstLeg.getSubwayLineName()).isEqualTo("2호선");
+            softAssertions.assertThat(firstLeg.getSubwayLine().getTitle()).isEqualTo("2호선");
 
             final Path transferLeg = actualPaths.get(1);
             softAssertions.assertThat(transferLeg.getTravelMethod()).isEqualTo(TravelMethod.TRANSFER);
@@ -89,7 +89,7 @@ class RouteFinderAdapterTest {
             softAssertions.assertThat(thirdLeg.getEnd().getName()).isEqualTo("광화문역");
             softAssertions.assertThat(thirdLeg.getTravelMethod()).isEqualTo(TravelMethod.SUBWAY);
             softAssertions.assertThat(thirdLeg.getTravelTime().toMinutes()).isEqualTo(5);
-            softAssertions.assertThat(thirdLeg.getSubwayLineName()).isEqualTo("5호선");
+            softAssertions.assertThat(thirdLeg.getSubwayLine().getTitle()).isEqualTo("5호선");
         });
     }
 

@@ -6,6 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record PlaceRecommendResponse(
         @Schema(description = "순번", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
         int index,
+        @Schema(description = "x 좌표", example = "127.001698", requiredMode = Schema.RequiredMode.REQUIRED)
+        double x,
+        @Schema(description = "y 좌표", example = "37.567013", requiredMode = Schema.RequiredMode.REQUIRED)
+        double y,
         @Schema(description = "이름", example = "매머드커피 루터회관점", requiredMode = Schema.RequiredMode.REQUIRED)
         String name,
         @Schema(description = "카테고리", example = "카페", requiredMode = Schema.RequiredMode.REQUIRED)

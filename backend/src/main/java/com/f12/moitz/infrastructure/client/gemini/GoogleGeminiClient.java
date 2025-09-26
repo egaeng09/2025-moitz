@@ -1,6 +1,6 @@
 package com.f12.moitz.infrastructure.client.gemini;
 
-import static com.f12.moitz.infrastructure.PromptGenerator.ADDITIONAL_PROMPT;
+import static com.f12.moitz.infrastructure.PromptGenerator.ADDITIONAL_WITH_CANDIDATE_PROMPT;
 import static com.f12.moitz.infrastructure.PromptGenerator.RECOMMENDATION_COUNT;
 
 import com.f12.moitz.application.dto.PlaceRecommendResponse;
@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.errors.ClientException;
 import com.google.genai.errors.ServerException;
+import com.google.genai.types.Candidate;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
@@ -39,22 +40,35 @@ public class GoogleGeminiClient {
     private final ObjectMapper objectMapper;
 
     public RecommendedLocationsResponse generateResponse(
-            final List<String> stationNames,
+            final List<String> startingPlaces,
+            final List<String> candidatePlaces,
             final String requirement
     ) {
         return readValue(
-                generateContent(stationNames, requirement, PromptGenerator.getSchema()).text(),
+                generateContent(
+                        startingPlaces,
+                        candidatePlaces,
+                        requirement,
+                        PromptGenerator.getSchema()
+                ).text(),
                 RecommendedLocationsResponse.class
         );
     }
 
     private GenerateContentResponse generateContent(
-            final List<String> stationNames,
+            final List<String> startingStations,
+            final List<String> candidateStations,
             final String requirement,
             final Map<String, Object> inputData
     ) {
-        final String stations = String.join(", ", stationNames);
-        final String prompt = String.format(ADDITIONAL_PROMPT, RECOMMENDATION_COUNT, stations, requirement, RECOMMENDATION_COUNT);
+        final String prompt = String.format(
+                ADDITIONAL_WITH_CANDIDATE_PROMPT,
+                RECOMMENDATION_COUNT,
+                startingStations,
+                candidateStations,
+                requirement,
+                RECOMMENDATION_COUNT
+        );
 
         final GenerateContentConfig config = GenerateContentConfig.builder()
                 .temperature(0.4F)
@@ -66,7 +80,7 @@ public class GoogleGeminiClient {
         return generateWith(prompt, config);
     }
 
-    public List<PlaceRecommendResponse> generateWith(String prompt) {
+    public List<PlaceRecommendResponse> generateWith(final String prompt) {
         final GenerateContentConfig config = GenerateContentConfig.builder()
                 .temperature(0.4F)
                 .responseMimeType("application/json")
@@ -120,15 +134,15 @@ public class GoogleGeminiClient {
     public RecommendedPlaceResponses extractResponse(final GenerateContentResponse generateContentResponse) {
         try {
             String originalText = generateContentResponse.candidates()
-                    .map(candidates -> candidates.get(0))
-                    .map(candidate -> candidate.content().orElse(null))
-                    .map(content -> content.parts().orElse(null))
-                    .map(parts -> parts.get(0))
-                    .map(part -> part.text().orElse(null))
+                    .map(List::getFirst)
+                    .flatMap(Candidate::content)
+                    .flatMap(Content::parts)
+                    .map(List::getFirst)
+                    .flatMap(Part::text)
                     .orElse(null);
 
             if (originalText == null || originalText.trim().isEmpty()) {
-                log.error("Gemini API 응답이 비어있습니다.");
+                log.error("Gemini API 응답은 존재하나, 생성된 응답이 비어있습니다.");
                 throw new RetryableApiException(ExternalApiErrorCode.INVALID_GEMINI_RESPONSE_FORMAT);
             }
 
@@ -154,8 +168,7 @@ public class GoogleGeminiClient {
 
             return objectMapper.readValue(content, valueType);
         } catch (JsonProcessingException e) {
-            log.error("JSON 파싱 실패. 내용: {}", content);
-            log.error("파싱 오류 상세:", e);
+            log.error("JSON 파싱 실패. 내용: {}", content, e);
             throw new RetryableApiException(ExternalApiErrorCode.INVALID_GEMINI_RESPONSE_FORMAT);
         }
     }

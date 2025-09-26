@@ -3,7 +3,6 @@ package com.f12.moitz.domain;
 import com.f12.moitz.common.error.exception.BadRequestException;
 import com.f12.moitz.common.error.exception.GeneralErrorCode;
 import java.util.Arrays;
-import java.util.List;
 import lombok.Getter;
 
 @Getter
@@ -30,7 +29,7 @@ public enum RecommendCondition {
         return Arrays.stream(values())
                 .filter(recommendCondition -> recommendCondition.title.equals(title))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException(GeneralErrorCode.INPUT_INVALID_DESCRIPTION));
+                .orElseThrow(() -> new BadRequestException(GeneralErrorCode.INPUT_INVALID_DESCRIPTION, title));
     }
 
 }

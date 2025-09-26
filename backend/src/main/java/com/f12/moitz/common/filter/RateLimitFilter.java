@@ -38,8 +38,8 @@ public class RateLimitFilter implements Filter {
 
         final String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
         final String userAgent = httpServletRequest.getHeader("User-Agent");
-        log.debug("Processing request from IP: {} for URI: {}", clientIp, httpServletRequest.getRequestURI());
 
+        log.debug("Processing request from IP: {} for URI: {}", clientIp, httpServletRequest.getRequestURI());
         try {
             final ConsumptionProbe probe = rateLimitService.tryConsume(clientIp, userAgent);
 
@@ -47,7 +47,7 @@ public class RateLimitFilter implements Filter {
                 log.warn("Rate limit exceeded for user: {} | {}", clientIp, userAgent);
                 handleRateLimitExceeded(httpServletRequest, httpServletResponse, probe.getNanosToWaitForRefill());
             } else {
-                log.debug("Request allowed for user: {} | {}, remaining tokens: {}",
+                log.info("Request allowed for user: {} | {}, remaining tokens: {}",
                         clientIp,
                         userAgent,
                         probe.getRemainingTokens()

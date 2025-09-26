@@ -22,14 +22,25 @@ public record RecommendedPlaceResponses(
 
 record RecommendedSpecificPlace(
         int index,
+        double x,
+        double y,
         String name,
         String category,
         @JsonProperty("distance") int walkingTime,
         String url
 ) {
-    public RecommendedSpecificPlace(final int index, final String name, final String category, final int walkingTime,
-                                    final String url) {
+    public RecommendedSpecificPlace(
+            final int index,
+            final double x,
+            final double y,
+            final String name,
+            final String category,
+            final int walkingTime,
+            final String url
+    ) {
         this.index = index;
+        this.x = x;
+        this.y = y;
         this.name = name;
         this.category = category;
         this.walkingTime = (int) Math.round(walkingTime / 80.0);
@@ -39,6 +50,8 @@ record RecommendedSpecificPlace(
     PlaceRecommendResponse toPlaceRecommendResponse() {
         return new PlaceRecommendResponse(
                 index,
+                x,
+                y,
                 name,
                 category,
                 walkingTime,

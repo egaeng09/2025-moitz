@@ -3,17 +3,12 @@ package com.f12.moitz.domain;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
-@Document(collection = "place")
 @EqualsAndHashCode
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Place {
 
-    @Id
-    private String id;
     private String name;
     private Point point;
 
@@ -30,6 +25,10 @@ public class Place {
         if (point == null) {
             throw new IllegalArgumentException("좌표는 필수입니다.");
         }
+    }
+
+    public boolean isNameMatch(final String name) {
+        return this.name.equals(name);
     }
 
 }

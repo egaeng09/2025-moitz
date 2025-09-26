@@ -4,6 +4,7 @@ import static com.f12.moitz.infrastructure.PromptGenerator.FORMAT_SINGLE_PLACE_T
 import static com.f12.moitz.infrastructure.PromptGenerator.PLACE_FILTER_PROMPT;
 import static com.f12.moitz.infrastructure.PromptGenerator.PLACE_RECOMMENDATION_COUNT;
 
+import com.f12.moitz.domain.Point;
 import com.f12.moitz.application.dto.PlaceRecommendResponse;
 import com.f12.moitz.application.port.AsyncPlaceRecommender;
 import com.f12.moitz.domain.Place;
@@ -93,6 +94,7 @@ public class GeminiPlaceRecommenderAsyncAdapter implements AsyncPlaceRecommender
                     List<RecommendedPlace> recommendedPlaces = filteredResponses.stream()
                             .map(response -> new RecommendedPlace(
                                     response.name(),
+                                    new Point(response.x(), response.y()),
                                     response.category(),
                                     response.walkingTime(),
                                     response.url()

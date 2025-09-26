@@ -31,11 +31,11 @@ class PointTest {
         assertSoftly(softAssertions -> {
             softAssertions.assertThatThrownBy(() -> new Point(smallX, y))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("X(경도)는 대한민국 영역 내에 있어야 합니다. 범위: 124 ~ 132");
+                    .hasMessage("X(경도)는 대한민국 영역 내에 있어야 합니다. 범위: 124 ~ 132, 현재 값: " + smallX);
 
             softAssertions.assertThatThrownBy(() -> new Point(bigX, y))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("X(경도)는 대한민국 영역 내에 있어야 합니다. 범위: 124 ~ 132");
+                    .hasMessage("X(경도)는 대한민국 영역 내에 있어야 합니다. 범위: 124 ~ 132, 현재 값: " + bigX);
         });
     }
 
@@ -51,10 +51,10 @@ class PointTest {
         assertSoftly(softAssertions -> {
             softAssertions.assertThatThrownBy(() -> new Point(x, smallY))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Y(위도)는 대한민국 영역 내에 있어야 합니다. 범위: 33 ~ 43");
+                    .hasMessage("Y(위도)는 대한민국 영역 내에 있어야 합니다. 범위: 33 ~ 43, 현재 값: " + smallY);
             softAssertions.assertThatThrownBy(() -> new Point(x, bigY))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Y(위도)는 대한민국 영역 내에 있어야 합니다. 범위: 33 ~ 43");
+                    .hasMessage("Y(위도)는 대한민국 영역 내에 있어야 합니다. 범위: 33 ~ 43, 현재 값: " + bigY);
         });
     }
 

@@ -7,8 +7,9 @@ import com.f12.moitz.domain.Place;
 import com.f12.moitz.domain.Point;
 import com.f12.moitz.domain.Route;
 import com.f12.moitz.domain.TravelMethod;
+import com.f12.moitz.domain.subway.SubwayLine;
 import com.f12.moitz.infrastructure.client.odsay.OdsayClient;
-import com.f12.moitz.infrastructure.client.odsay.SubwayCode;
+import com.f12.moitz.infrastructure.client.odsay.OdsaySubwayCode;
 import com.f12.moitz.infrastructure.client.odsay.dto.SubPathResponse;
 import com.f12.moitz.infrastructure.client.odsay.dto.SubwayRouteSearchResponse;
 import java.util.ArrayList;
@@ -87,7 +88,7 @@ public class RouteFinderAdapter implements RouteFinder {
                         endPlace,
                         TravelMethod.from(subPath.trafficType()),
                         subPath.sectionTime() * 60,
-                        SubwayCode.fromCode(subPath.lane().getFirst().subwayCode()).getTitle()
+                        SubwayLine.fromTitle(OdsaySubwayCode.fromCode(subPath.lane().getFirst().subwayCode()).getTitle())
                 ));
 
                 lastValidStationName = subPath.endName();

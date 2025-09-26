@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 class RecommendedPlaceTest {
 
+    private static final Point DEFAULT_POINT = new Point(127.0, 37.5);
+
     @Test
     @DisplayName("예외가 발생하지 않고 추천 장소가 생성된다")
     void doesNotThrow() {
@@ -19,7 +21,7 @@ class RecommendedPlaceTest {
         final String url = "https://www.starbucks.co.kr";
 
         // When & Then
-        assertThatNoException().isThrownBy(() -> new RecommendedPlace(placeName, category, walkingTime, url));
+        assertThatNoException().isThrownBy(() -> new RecommendedPlace(placeName, DEFAULT_POINT, category, walkingTime, url));
     }
 
     @Test
@@ -33,23 +35,23 @@ class RecommendedPlaceTest {
 
         // When & Then
         assertSoftly(softAssertions -> {
-            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(null, category, walkingTime, url))
+            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(null, DEFAULT_POINT, category, walkingTime, url))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("장소 이름은 필수입니다.");
+                    .hasMessage("이름은 비어있거나 null일 수 없습니다.");
 
-            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, null, walkingTime, url))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("카테고리는 필수입니다.");
-
-            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, "", walkingTime, url))
+            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, DEFAULT_POINT, null, walkingTime, url))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("카테고리는 필수입니다.");
 
-            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, category, walkingTime, null))
+            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, DEFAULT_POINT, "", walkingTime, url))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("카테고리는 필수입니다.");
+
+            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, DEFAULT_POINT, category, walkingTime, null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("URL은 필수입니다.");
 
-            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, category, walkingTime, ""))
+            softAssertions.assertThatThrownBy(() -> new RecommendedPlace(placeName, DEFAULT_POINT, category, walkingTime, ""))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("URL은 필수입니다.");
         });
@@ -65,7 +67,7 @@ class RecommendedPlaceTest {
         final String url = "https://www.starbucks.co.kr";
 
         // When & Then
-        assertThatThrownBy(() -> new RecommendedPlace(placeName, category, walkingTime, url))
+        assertThatThrownBy(() -> new RecommendedPlace(placeName, DEFAULT_POINT, category, walkingTime, url))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("도보 시간은 0 이상이어야 합니다.");
     }

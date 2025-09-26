@@ -32,7 +32,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     fallbackRender={({ reset, error }) => (
       <FallBackPage reset={reset} error={error} />
     )}
-    onReset={() => window.location.reload()}
+    onReset={() => window.location.replace('/')}
   >
     <React.StrictMode>
       <GlobalStyle />

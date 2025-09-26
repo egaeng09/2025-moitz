@@ -6,13 +6,13 @@ import IconError from '@icons/icon-error.svg';
 
 import * as fallBackPage from './fallBackPage.styled';
 
-function FallBackPage({
-  reset,
-  error,
-}: {
+interface FallBackPageProps {
   reset: () => void;
   error: Error | null;
-}) {
+  text?: string;
+}
+
+function FallBackPage({ reset, error, text }: FallBackPageProps) {
   return (
     <Layout>
       <div
@@ -45,12 +45,12 @@ function FallBackPage({
             <br />
             계속 문제가 발생한다면 모잇지에 알려주세요!
             <br />
-            {error?.message}
+            {error?.message || '알 수 없는 오류가 발생했습니다'}
           </span>
         </div>
         <BottomButton
           type="button"
-          text="다시 시도하기"
+          text={text || '홈으로 가기'}
           active
           onClick={reset}
         />
