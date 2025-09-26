@@ -65,6 +65,7 @@
     "typescript-eslint": "^8.36.0",
     "web-streams-polyfill": "^4.1.0",
     "webpack": "^5.100.0",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2",
     "whatwg-fetch": "^3.6.20"

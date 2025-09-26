@@ -21,6 +21,7 @@ export type useLocationsReturn = {
 };
 
 const initialData: Location = {
+  requirement: 'NOT_SELECTED',
   startingPlaces: [],
   recommendedLocations: [],
 };
