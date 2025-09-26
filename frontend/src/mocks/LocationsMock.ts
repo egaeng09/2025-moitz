@@ -69,6 +69,7 @@ export const RecommendedLocationsMock: RecommendedLocation[] = [
 ];
 
 export const LocationsMock: LocationResponse = {
+  requirement: 'FOCUS',
   startingPlaces: [
     {
       id: 1,

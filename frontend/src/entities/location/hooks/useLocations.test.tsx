@@ -104,6 +104,7 @@ describe('useLocations', () => {
         expect(result.current.isLoading).toBe(false);
         expect(result.current.isError).toBe(true);
         expect(result.current.data).toEqual({
+          requirement: 'NOT_SELECTED',
           startingPlaces: [],
           recommendedLocations: [],
         });
