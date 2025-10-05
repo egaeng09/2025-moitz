@@ -3,7 +3,7 @@ import { SelectedLocation } from '@features/recommendation/types/SelectedLocatio
 import { StartingPlace } from '@entities/location/types/Location';
 
 import { flex, scroll, typography } from '@shared/styles/default.styled';
-import { numberToCharCode } from '@shared/utils/numberToCharCode';
+import { numberToCharCode } from '@shared/lib/numberToCharCode';
 
 import DetailSection from '../detailSection/DetailSection';
 import PlaceCard from '../placeCard/PlaceCard';
