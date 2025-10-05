@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
-import { colorToken, borderRadiusToken } from '@shared/styles/tokens';
 import { getLineInfo } from '@shared/lib/getLineInfo';
+import { colorToken, borderRadiusToken } from '@shared/styles/tokens';
 
 export const container = () => css`
   position: relative;
