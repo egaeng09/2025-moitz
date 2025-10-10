@@ -1,6 +1,8 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
+import { Location } from '@entities/location/types/Location';
+
 import { LocationsRequestBodyMock } from '@mocks/LocationsRequestBodyMock';
 import { server } from '@mocks/server';
 
@@ -67,7 +69,7 @@ describe('useLocations', () => {
       });
 
       // then: 초기에는 로딩 중이어야 한다
-      let data;
+      let data: Location;
       await act(async () => {
         data = await result.current.getRecommendationResult(id);
       });
