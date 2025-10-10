@@ -61,7 +61,7 @@ describe('useLocations', () => {
       // when: 훅을 실행하면
       const { result } = renderHook(() => useLocations());
 
-      let id;
+      let id: string;
       await act(async () => {
         id = await result.current.getRecommendationId(LocationsRequestBodyMock);
       });
