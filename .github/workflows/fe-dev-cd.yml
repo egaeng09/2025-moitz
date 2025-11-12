@@ -1,15 +1,15 @@
-name: FE dev CD (dev)
+name: FE dev CD (fe-dev)
 
 on:
   push:
-    branches: [dev]
+    branches: [fe-dev]
     paths: ['frontend/**']
   workflow_dispatch:
 
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET: techcourse-project-2025
-  FE_DEV_PREFIX: moitz/fe-dev/dist
+  FE_DEV_PREFIX: moitz/fe-dev
   FE_CACHE_PATH: /* # 전체 무효화
 
 jobs:
@@ -38,27 +38,24 @@ jobs:
       - name: 코드 가져오기
         uses: actions/checkout@v4
 
-      - name: dist 폴더 생성
-        run: mkdir -p dist
-
       - name: CI 빌드 결과물 다운로드
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.ci.outputs.build.artifact-name }}
-          path: frontend/dist
+          name: ${{ needs.ci.outputs.artifact-name }}
+          path: .
         timeout-minutes: 5
 
       - name: 정적 자산 업로드 (긴 캐시, index.html 제외)
         run: |
-          aws s3 sync "dist/" "s3://${{ env.S3_BUCKET }}/${{ env.FE_DEV_PREFIX }}/" \
+          aws s3 sync "dist/" "s3://${{ env.S3_BUCKET }}/${{ env.FE_DEV_PREFIX }}/dist/" \
             --delete \
             --exclude "index.html" \
             --cache-control "public, max-age=31536000, immutable"
 
       - name: index.html 업로드 (no-cache)
         run: |
-          aws s3 cp "dist/index.html" "s3://${{ env.S3_BUCKET }}/${{ env.FE_DEV_PREFIX }}/index.html" \
-            --cache-control "no-cache, max-age=0, must-revalidate" \
+          aws s3 cp "dist/index.html" "s3://${{ env.S3_BUCKET }}/${{ env.FE_DEV_PREFIX }}/dist/index.html" \
+            --cache-control "public, max-age=0, s-maxage=0, must-revalidate" \
             --content-type "text/html"
 
       - name: CloudFront 전체 무효화 (/*)
