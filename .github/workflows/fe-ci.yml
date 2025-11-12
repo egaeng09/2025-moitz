@@ -3,16 +3,20 @@ name: FE CI
 on:
   push:
     branches:
-      - main
-      - dev
+      - fe-prod
+      - fe-dev
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_call: {}
+  workflow_call:
+    outputs:
+      artifact-name:
+        description: '빌드 결과물 아티팩트 이름'
+        value: ${{ jobs.build.outputs.artifact-name }}
 
 jobs:
   build:
     outputs:
-      artifact-name: dist
+      artifact-name: build-result
     if: >
       github.actor == 'kaori-killer' || 
       github.actor == 'eunsoA' || 
@@ -50,17 +54,17 @@ jobs:
       - name: 테스트 및 커버리지 확인
         run: npx jest --verbose --coverage
 
-      - name: 빌드 실행 (main)
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.base_ref == 'main')
+      - name: 빌드 실행 (fe-prod)
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/fe-prod') || (github.event_name == 'pull_request' && github.base_ref == 'fe-prod')
         run: npm run build:prod
 
-      - name: 빌드 실행 (dev)
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || (github.event_name == 'pull_request' && github.base_ref == 'dev')
+      - name: 빌드 실행 (fe-dev)
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/fe-dev') || (github.event_name == 'pull_request' && github.base_ref == 'fe-dev')
         run: npm run build:dev
 
       - name: 빌드 결과물 업로드
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: frontend/dist
+          name: build-result
+          path: dist
           retention-days: 1
